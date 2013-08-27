@@ -1,0 +1,7 @@
+parameters:
+    ant.photo_rest.upload.photo_uploader: Ant\PhotoRestBundle\Upload\PhotoUploader
+
+services:
+    ant.photo_rest.upload.photo_uploader:
+        class: %ant.photo_rest.upload.photo_uploader%
+        arguments: [@image_adapter]

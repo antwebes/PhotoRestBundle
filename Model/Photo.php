@@ -4,8 +4,9 @@ namespace Ant\PhotoRestBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ant\PhotoRestBundle\Model\ParticipantInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
-abstract class Foto implements FotoInterface {
+abstract class Photo implements PhotoInterface {
 	
 	/**
 	 * @ORM\Id
@@ -38,6 +39,15 @@ abstract class Foto implements FotoInterface {
 	 * @ORM\Column(type="string", length=255, name="title", nullable=true)
 	 */
 	protected $title;
+	/**
+	 * @Assert\File(
+	 *     maxSize="2000k",
+	 *     mimeTypes={"image/png", "image/jpeg", "image/pjpeg"}
+	 * )
+	 *
+	 * @var File $image
+	 */
+	public $image;
 	
 	public function __construct()
 	{
@@ -56,5 +66,20 @@ abstract class Foto implements FotoInterface {
 	public function getParticipant()
 	{
 		return $this->participant;
+	}
+	public function getImage() {
+		return $this->image;
+	}
+	
+	public function setImage($image) {
+		$this->image = $image;
+	}
+	
+	public function getTitle() {
+		return $this->title;
+	}
+	
+	public function setTitle($title) {
+		$this->title = $title;
 	}
 }

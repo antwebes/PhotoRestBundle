@@ -1,0 +1,3 @@
+ant_photo_rest_create:
+    pattern: /photo
+    defaults: { _controller: AntPhotoRestBundle:Photo:create }

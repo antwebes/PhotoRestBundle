@@ -9,9 +9,9 @@
 * with this source code in the file LICENSE.
 */
 
-namespace Ant\FotoRestBundle\Entity;
+namespace Ant\PhotoRestBundle\Entity;
 
-use Ant\FotoRestBundle\Model\Foto as BaseFoto;
+use Ant\PhotoRestBundle\Model\Photo as BasePhoto;
 
 /**
 * Default ORM implementation of BadgetInterface.
@@ -20,7 +20,7 @@ use Ant\FotoRestBundle\Model\Foto as BaseFoto;
 *
 * @author Pablo  <pablo@antweb.es>
 */
-abstract class Foto extends BaseFoto
+abstract class Photo extends BasePhoto
 {
 	public function __toString()
 	{
