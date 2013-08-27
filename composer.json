@@ -1,5 +1,5 @@
 {
-    "name": "antwebes/PhotoRestbundle",
+    "name": "antwebes/photo-rest-bundle",
     "type": "symfony-bundle",
     "description": "Photo Rest Bundle for symfony2",
     "keywords": ["badge"],
