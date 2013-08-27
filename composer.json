@@ -1,0 +1,25 @@
+{
+    "name": "antwebes/FotoRestbundle",
+    "type": "symfony-bundle",
+    "description": "Foto Rest Bundle for symfony2",
+    "keywords": ["badge"],
+    "homepage": "https://github.com/antwebes/FotoRestbundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Chrysweel",
+            "homepage": "https://github.com/antwebes"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2"
+    },
+    "require-dev": {
+        "symfony/framework-bundle": ">=2.1,<2.2-dev"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": { "ant\\FotoRestBundle": "" }
+    },
+    "target-dir": "ant/FotoRestBundle"
+}
