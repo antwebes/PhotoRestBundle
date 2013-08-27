@@ -4,4 +4,4 @@ parameters:
 services:
     ant.photo_rest.upload.photo_uploader:
         class: %ant.photo_rest.upload.photo_uploader%
-        arguments: [@image_adapter]
+        arguments: [@image_adapter_fs]

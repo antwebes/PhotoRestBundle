@@ -12,14 +12,15 @@ class PhotoType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('image')
+            ->add('image', 'file', array(
+            		'label'=> 'Imagen'))
         ;
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(        	
-            'data_class' => 'Ant\PhotoRestBundle\Entity\Photo',
+            'data_class' => 'Chatea\FotoBundle\Entity\Photo',
         	'csrf_protection' => false
         ));
     }

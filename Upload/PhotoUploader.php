@@ -27,7 +27,8 @@ class PhotoUploader
         $filename = sprintf('%s/%s/%s/%s.%s', date('Y'), date('m'), date('d'), uniqid(), $file->getClientOriginalExtension());
 
         $adapter = $this->filesystem->getAdapter();
-        $adapter->setMetadata($filename, array('contentType' => $file->getClientMimeType()));
+        //http://braincrafted.com/symfony2-gaufrette-s3/
+//         $adapter->setMetadata($filename, array('contentType' => $file->getClientMimeType()));
         $adapter->write($filename, file_get_contents($file->getPathname()));
 
         return $filename;

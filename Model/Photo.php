@@ -3,8 +3,11 @@
 namespace Ant\PhotoRestBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
+
 use Ant\PhotoRestBundle\Model\ParticipantInterface;
+
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 abstract class Photo implements PhotoInterface {
 	
@@ -41,7 +44,7 @@ abstract class Photo implements PhotoInterface {
 	protected $title;
 	/**
 	 * @Assert\File(
-	 *     maxSize="2000k",
+	 *     maxSize="222222222222000k",
 	 *     mimeTypes={"image/png", "image/jpeg", "image/pjpeg"}
 	 * )
 	 *
@@ -71,7 +74,7 @@ abstract class Photo implements PhotoInterface {
 		return $this->image;
 	}
 	
-	public function setImage($image) {
+	public function setImage(UploadedFile $image = null) {
 		$this->image = $image;
 	}
 	
