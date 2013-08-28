@@ -39,12 +39,16 @@ abstract class Photo implements PhotoInterface {
 	 */
 	protected $publicatedAt;
 	/**
+	 * @ORM\Column(type="string")
+	 */
+	protected $path;
+	/**
 	 * @ORM\Column(type="string", length=255, name="title", nullable=true)
 	 */
 	protected $title;
 	/**
 	 * @Assert\File(
-	 *     maxSize="222222222222000k",
+	 *     maxSize="2000k",
 	 *     mimeTypes={"image/png", "image/jpeg", "image/pjpeg"}
 	 * )
 	 *
@@ -84,5 +88,12 @@ abstract class Photo implements PhotoInterface {
 	
 	public function setTitle($title) {
 		$this->title = $title;
+	}
+	public function getPath() {
+		return $this->path;
+	}
+	
+	public function setPath($path) {
+		$this->path = $path;
 	}
 }

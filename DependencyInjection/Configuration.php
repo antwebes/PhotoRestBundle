@@ -18,7 +18,9 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('ant_photo_rest');
+        $rootNode = $treeBuilder->root('ant_photo_rest')
+	        ->children()
+	        	->scalarNode('db_driver')->cannotBeOverwritten()->isRequired()->end();
 
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for

@@ -1,7 +1,10 @@
 <?php
 
 namespace Ant\PhotoRestBundle\Model;
+
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+
 interface PhotoInterface {
 
 	public function getTitle();

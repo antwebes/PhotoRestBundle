@@ -1,0 +1,6 @@
+parameters:
+    ant.photo_rest.entity_manager.photo_manager.class: Ant\PhotoRestBundle\EntityManager\PhotoManager
+services:
+    ant.photo_rest.entity_manager.photo_manager:
+        class: %ant.photo_rest.entity_manager.photo_manager.class%
+        arguments: [@doctrine.orm.entity_manager , %ant.photo_rest.model.photo.class%]

@@ -1,0 +1,16 @@
+parameters:
+    ant.photo_rest.form_factory.photo.class.default: Ant\PhotoRestBundle\FormFactory\PhotoFormFactory
+    ant.photo_rest.form_type.photo.class: Ant\PhotoRestBundle\FormType\PhotoType
+    ant.photo_rest.photo.form_name: ant_photo
+    ant.photo_rest.model.photo.class: Chatea\FotoBundle\Entity\Photo
+    
+services:
+    ant.photo_rest.form_factory.photo.default:
+        class: %ant.photo_rest.form_factory.photo.class.default%
+        arguments: [@form.factory, @ant.photo_rest.form_type.photo.default, %ant.photo_rest.photo.form_name%]
+        
+    ant.photo_rest.form_type.photo.default:
+        class: %ant.photo_rest.form_type.photo.class%
+        arguments: [%ant.photo_rest.model.photo.class%]
+        tags:
+            - { name: form.type , alias: %ant.photo_rest.photo.form_name% }

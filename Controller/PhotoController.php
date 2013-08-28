@@ -17,20 +17,29 @@ class PhotoController extends BaseRestController
 	
 	public function createAction(Request $request)
 	{
-		$photo = new Photo();
-		$form = $this->createFormBuilder($photo)
-			->add('image', 'file', array('label'  => 'Imagen'))
-			->add('title', 'text', array('required'=>false))->getForm();
+		$dataRequest = $request->request->all();
+		
+		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
+		$photo = $photoManager->createPhoto();
+		
+		$form = $this->get('ant.photo_rest.form_factory.photo.default')->createForm();
+		$form->setData($photo);
 		
 		if ($request->isMethod('POST')) {
 			
-			$form->bind($request);
+			$form->bind($dataRequest);
 			
 			if ($form->isValid()) {
 				
-				$data = $form->getData();
-				$url = $this->getPhotoUploader()->upload($data->getImage());
-		
+				$currentUser = $this->get('security.context')->getToken()->getUser();
+				$photo->setParticipant($currentUser);
+				if ($request->files->get('image')) $image = $request->files->get('image');
+				else $image = $form->getData()->getImage();
+				
+				$url = $this->getPhotoUploader()->upload($image);
+				$photo->setPath($url);
+				$photoManager->savePhoto($photo);
+				
 				return $this->buildView($photo, 200);
 			}
 			return $this->buildFormErrorsView($form);
