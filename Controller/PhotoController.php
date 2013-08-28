@@ -7,14 +7,26 @@ use Symfony\Component\HttpFoundation\Request;
 use Chatea\ApiBundle\Util\Util;
 
 use Ant\PhotoRestBundle\Entity\Photo;
-
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 /**
  * Foto controller.
  *
  */
 class PhotoController extends BaseRestController
 {
-	
+	/**
+	 * Create a new photo entity
+	 * @Rest\View(statusCode=204)
+	 *  @ApiDoc(
+	 *  	description="create a photo",
+	 *  	input="Ant\PhotoRestBundle\FormType\PhotoType",
+	 *  	output="Ant\PhotoRestBundle\Model\Photo",
+	 *		statusCodes={
+	 *         201="New entity created",
+	 *         400="Bad request"
+	 *     }
+	 *  )
+	 */
 	public function createAction(Request $request)
 	{
 		$dataRequest = $request->request->all();

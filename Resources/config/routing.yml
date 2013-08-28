@@ -1,4 +1,4 @@
 ant_photo_rest_create:
     pattern: /ant/photo
     defaults: { _controller: AntPhotoRestBundle:Photo:create }
-  #  methods: [POST, PUT]
+    methods: [POST, PUT]
