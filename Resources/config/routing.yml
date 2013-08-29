@@ -6,3 +6,7 @@ ant_photo_rest_delete:
     pattern: /photo/{id}
     defaults: { _controller: AntPhotoRestBundle:Photo:delete }
     methods: [DELETE]
+ant_photo_rest_vote_create:
+    pattern: /vote/{id}
+    defaults: { _controller: AntPhotoRestBundle:Vote:create }
+    methods: [POST, PUT]

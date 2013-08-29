@@ -17,7 +17,7 @@ abstract class PhotoManager
 		$this->doSavePhoto($photo);
 	}
 	
-	public function deleteBadge(PhotoInterface $photo)
+	public function deletePhoto(PhotoInterface $photo)
 	{
 		$this->doDeletePhoto($photo);
 	}

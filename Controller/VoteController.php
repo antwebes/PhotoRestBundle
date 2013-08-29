@@ -2,45 +2,38 @@
 
 namespace Ant\PhotoRestBundle\Controller;
 
-use Chatea\ApiBundle\Controller\BaseRestController;
-
 use Symfony\Component\HttpFoundation\Request;
-
-use Ant\PhotoRestBundle\Entity\Photo;
-use Ant\PhotoRestBundle\Util\ErrorResponse;
-use Ant\PhotoRestBundle\Util;
-use Ant\PhotoRestBundle\Event\AntPhotoRestEvents;
-use Ant\PhotoRestBundle\Event\PhotoEvent;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
- * Foto controller.
+ * Vote controller.
  *
  */
-class PhotoController extends BaseRestController
+class VoteController
 {
 	/**
-	 * Create a new photo entity
+	 * Create a new vote entity
 	 *  @ApiDoc(
-	 *  	description="create a photo",
-	 *  	input="Ant\PhotoRestBundle\FormType\PhotoType",
-	 *  	output="Ant\PhotoRestBundle\Model\Photo",
+	 *  	description="create a vote",
+	 *  	input="Ant\PhotoRestBundle\FormType\VoteType",
+	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
 	 *         201="New entity created",
 	 *         400="Bad request"
 	 *     }
 	 *  )
 	 */
-	public function createAction(Request $request)
-	{
-		$dataRequest = $request->request->all();
-		
+	public function createAction(Request $request, $photoId)
+	{		
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
-		$photo = $photoManager->createPhoto();
+		$photo = $photoManager->findPhotoById($photoId);
+		
+		$voteManager = $this->get('ant.photo_rest.manager.vote_manager');
+		$vote = $voteManager->createVote();
 		
 		$form = $this->get('ant.photo_rest.form_factory.photo.default')->createForm();
-		$form->setData($photo);
+		$form->setData($vote);
 		
 		if ($request->isMethod('POST')) {
 			
@@ -49,20 +42,18 @@ class PhotoController extends BaseRestController
 			if ($form->isValid()) {
 				
 				$currentUser = $this->get('security.context')->getToken()->getUser();
-				$photo->setParticipant($currentUser);
-				if ($request->files->get('image')) $image = $request->files->get('image');
-				else $image = $form->getData()->getImage();
+				$vote->setParticipant($currentUser);
 				
-				$url = $this->getPhotoUploader()->upload($image);
-				$photo->setPath($url);
-				$photoManager->savePhoto($photo);
-				
-				return $this->buildView($photo, 200);
+				$voteManager->saveVote($vote);
+				//TODO
+				$photoManager->incrementVote();
+				$photoManager->updateScore($form->getData()->getScore());
+				return $this->buildView($vote, 200);
 			}
 			return $this->buildFormErrorsView($form);
 		}		
 		return $this->render(
-				'AntPhotoRestBundle:Photo:add.html.twig',
+				'AntPhotoRestBundle:Vote:add.html.twig',
 				array('form'  => $form->createView())
 		);
 	}
@@ -113,12 +104,5 @@ class PhotoController extends BaseRestController
 	{
 		$view = $this->createFormErrorsView($form);
 		return $this->handleView($view);
-	}
-	/**
-	 * @return Ant\PhotoRestBundle\Upload\PhotoUploader
-	 */
-	protected function getPhotoUploader()
-	{
-		return $this->get('ant.photo_rest.upload.photo_uploader');
 	}
 }

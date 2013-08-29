@@ -11,7 +11,7 @@
 
 namespace Ant\PhotoRestBundle\Entity;
 
-use Ant\PhotoRestBundle\Model\Photo as BasePhoto;
+use Ant\PhotoRestBundle\Model\Vote as BaseVote;
 
 /**
 *
@@ -19,7 +19,7 @@ use Ant\PhotoRestBundle\Model\Photo as BasePhoto;
 *
 * @author Pablo  <pablo@antweb.es>
 */
-abstract class Photo extends BasePhoto
+abstract class Vote extends BaseVote
 {
 	public function __toString()
 	{

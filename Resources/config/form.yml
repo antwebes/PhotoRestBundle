@@ -4,6 +4,11 @@ parameters:
     ant.photo_rest.photo.form_name: ant_photo
     ant.photo_rest.model.photo.class: Chatea\FotoBundle\Entity\Photo
     
+    ant.photo_rest.form_factory.vote.class.default: Ant\PhotoRestBundle\FormFactory\VoteFormFactory
+    ant.photo_rest.form_type.vote.class: Ant\PhotoRestBundle\FormType\VoteType
+    ant.photo_rest.vote.form_name: ant_vote    
+    ant.photo_rest.model.vote.class: Chatea\FotoBundle\Entity\Vote
+    
 services:
     ant.photo_rest.form_factory.photo.default:
         class: %ant.photo_rest.form_factory.photo.class.default%
@@ -14,3 +19,12 @@ services:
         arguments: [%ant.photo_rest.model.photo.class%]
         tags:
             - { name: form.type , alias: %ant.photo_rest.photo.form_name% }
+    ant.photo_rest.form_factory.vote.default:
+        class: %ant.photo_rest.form_factory.vote.class.default%
+        arguments: [@form.factory, @ant.photo_rest.form_type.vote.default, %ant.photo_rest.vote.form_name%]
+        
+    ant.photo_rest.form_type.vote.default:
+        class: %ant.photo_rest.form_type.vote.class%
+        arguments: [%ant.photo_rest.model.vote.class%]
+        tags:
+            - { name: form.type , alias: %ant.photo_rest.vote.form_name% }

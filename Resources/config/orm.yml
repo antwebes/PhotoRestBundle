@@ -1,6 +1,11 @@
 parameters:
     ant.photo_rest.entity_manager.photo_manager.class: Ant\PhotoRestBundle\EntityManager\PhotoManager
+    ant.photo_rest.entity_manager.vote_manager.class: Ant\PhotoRestBundle\EntityManager\VoteManager
+    
 services:
     ant.photo_rest.entity_manager.photo_manager:
         class: %ant.photo_rest.entity_manager.photo_manager.class%
         arguments: [@doctrine.orm.entity_manager , %ant.photo_rest.model.photo.class%]
+    ant.photo_rest.manager.vote_manager:
+        class: %ant.photo_rest.entity_manager.vote_manager.class%
+        arguments: [@doctrine.orm.entity_manager , %ant.photo_rest.model.vote.class%]

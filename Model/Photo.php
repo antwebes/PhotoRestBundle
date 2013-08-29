@@ -19,7 +19,7 @@ abstract class Photo implements PhotoInterface {
 	protected $id;
 	
 	/**
-	 * Participant that created the badge
+	 * Participant that created the photo
 	 *
 	 * @var ParticipantInterface
 	 */
@@ -61,14 +61,14 @@ abstract class Photo implements PhotoInterface {
 		$this->publicatedAt = new \DateTime('now');
 	}
 	/**
-	 * @see Ant\BadgeBundle\Model\FotoInterface::setParticipant()
+	 * @see Ant\PhotoRestBundle\Model\FotoInterface::setParticipant()
 	 */
 	public function setParticipant(ParticipantInterface $participant)
 	{
 		$this->participant = $participant;
 	}
 	/**
-	 * @see ant\BadgeBundle\Model\FotoInterface::getParticipant()
+	 * @see ant\PhotoRestBundle\Model\FotoInterface::getParticipant()
 	 */
 	public function getParticipant()
 	{
