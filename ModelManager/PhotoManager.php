@@ -17,11 +17,24 @@ abstract class PhotoManager
 		$this->doSavePhoto($photo);
 	}
 	
+	public function deleteBadge(PhotoInterface $photo)
+	{
+		$this->doDeletePhoto($photo);
+	}
+	
 	public function createPhoto()
 	{
 		$class = $this->getClass();
 		$photo = new $class;
 		
 		return $photo;
+	}
+	/**
+	 * @param string $id
+	 * @return PhotoInterface
+	 */
+	public function findPhotoById($id)
+	{
+		return $this->findPhotoBy(array('id' => $id));
 	}
 }

@@ -3,10 +3,18 @@
 namespace Ant\PhotoRestBundle\controller;
 
 use Chatea\ApiBundle\Controller\BaseRestController;
+
 use Symfony\Component\HttpFoundation\Request;
-use Chatea\ApiBundle\Util\Util;
 
 use Ant\PhotoRestBundle\Entity\Photo;
+use Ant\PhotoRestBundle\Util\ErrorResponse;
+use Ant\PhotoRestBundle\Util;
+use Ant\PhotoRestBundle\Event\AntPhotoRestEvents;
+use Ant\PhotoRestBundle\Event\PhotoEvent;
+
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+
+use JMS\SecurityExtraBundle\Annotation\SecureParam;
 
 /**
  * Foto controller.
@@ -14,7 +22,18 @@ use Ant\PhotoRestBundle\Entity\Photo;
  */
 class PhotoController extends BaseRestController
 {
-	
+	/**
+	 * Create a new photo entity
+	 *  @ApiDoc(
+	 *  	description="create a photo",
+	 *  	input="Ant\PhotoRestBundle\FormType\PhotoType",
+	 *  	output="Ant\PhotoRestBundle\Model\Photo",
+	 *		statusCodes={
+	 *         201="New entity created",
+	 *         400="Bad request"
+	 *     }
+	 *  )
+	 */
 	public function createAction(Request $request)
 	{
 		$dataRequest = $request->request->all();
@@ -48,6 +67,40 @@ class PhotoController extends BaseRestController
 				'AntPhotoRestBundle:Photo:add.html.twig',
 				array('form'  => $form->createView())
 		);
+	}
+	/**
+	 * Delete a new photo entity
+	 *  @ApiDoc(
+	 *  	description="delete a photo",
+	 *  	output="Ant\PhotoRestBundle\Model\Photo",
+	 *		statusCodes={
+	 *         200="Returned when successful",
+	 *         403="Access denied",
+	 *         404="Unable to find Photo entity with code 32"
+	 *     }
+	 *  )
+	 */
+	public function deleteAction($id)
+	{
+		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
+		$photo = $photoManager->findPhotoById($id);
+		
+		if (null === $photo) {
+			$errorResponse = ErrorResponse::createResponse('Unable to find Photo entity', '34');
+			return $this->buildView($errorResponse, 404);
+		}
+		if ($photo->getParticipant() == $this->get('security.context')->getToken()->getUser() ){
+			$path = $photo->getPath();
+			$photo = $photoManager->deleteBadge($photo);
+			$dispatcher = $this->container->get('event_dispatcher');
+			$dispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($path));
+		} else{
+			$errorResponse = ErrorResponse::createResponse('Access denied', 'xxxx');
+		}
+		
+		
+		return $this->buildView('Photo deleted', 200);
+		
 	}
 	private function createFormErrorsView($form, $statusCode = 400)
 	{

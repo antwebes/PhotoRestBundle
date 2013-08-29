@@ -1,0 +1,9 @@
+parameters:
+
+services:
+    ant.photo_rest.listener:
+        class: Ant\PhotoRestBundle\Listener\Listener
+        tags:
+            - { name: kernel.event_subscriber}
+        calls:
+           - [ setParameter, ['%kernel.root_dir%'] ]

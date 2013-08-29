@@ -48,7 +48,26 @@ class PhotoManager extends BasePhotoManager
 		$this->em->persist($photo);
 		$this->em->flush();
 	}
-	
+	/**
+	 * Finds one photo by the given criteria
+	 *
+	 * @param array $criteria
+	 * @return PhotoInterface
+	 */
+	public function findPhotoBy(array $criteria)
+	{
+		return $this->repository->findOneBy($criteria);
+	}
+	/**
+	 * Deletes a photo
+	 *
+	 * @param PhotoInterface $photo the photo to delete
+	 */
+	public function doDeletePhoto(PhotoInterface $photo)
+	{
+		$this->em->remove($photo);
+		$this->em->flush();
+	}
 	/**
 	 * Returns the fully qualified comment thread class name
 	 *
