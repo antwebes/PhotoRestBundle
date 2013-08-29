@@ -1,8 +1,8 @@
 ant_photo_rest_create:
-    pattern: /ant/photo
+    pattern: /photo
     defaults: { _controller: AntPhotoRestBundle:Photo:create }
     methods: [POST, PUT]
 ant_photo_rest_delete:
-    pattern: /ant/photo/{id}
+    pattern: /photo/{id}
     defaults: { _controller: AntPhotoRestBundle:Photo:delete }
     methods: [DELETE]
