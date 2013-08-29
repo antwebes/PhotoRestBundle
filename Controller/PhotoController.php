@@ -24,7 +24,6 @@ class PhotoController extends BaseRestController
 {
 	/**
 	 * Create a new photo entity
-	 * @Rest\View(statusCode=204)
 	 *  @ApiDoc(
 	 *  	description="create a photo",
 	 *  	input="Ant\PhotoRestBundle\FormType\PhotoType",
