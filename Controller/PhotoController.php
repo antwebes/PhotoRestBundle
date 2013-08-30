@@ -65,6 +65,28 @@ class PhotoController extends BaseRestController
 		);
 	}
 	/**
+	 * Show a photo entity
+	 *  @ApiDoc(
+	 *  	description="show a photo",
+	 *  	output="Ant\PhotoRestBundle\Model\Photo",
+	 *		statusCodes={
+	 *         200="Returned when successful",
+	 *         404="Unable to find Photo entity with code 42"
+	 *     }
+	 *  )
+	 */
+	public function showAction($id)
+	{
+		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
+		$photo = $photoManager->findPhotoById($id);
+		
+		if (null === $photo) {
+			return $this->createError('Unable to find Photo entity', '42', '404');
+		}
+		return $this->buildView($photo, 200);
+		
+	}
+	/**
 	 * Delete a new photo entity
 	 *  @ApiDoc(
 	 *  	description="delete a photo",
