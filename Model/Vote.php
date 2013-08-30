@@ -67,4 +67,13 @@ abstract class Vote implements VoteInterface {
 	{
 		return $this->photo;
 	}
+	
+	public function getScore()
+	{
+		return $this->score;
+	}
+	public function setScore($score)
+	{
+		$this->score = $score;
+	}
 }

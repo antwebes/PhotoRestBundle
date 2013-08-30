@@ -34,6 +34,6 @@ class VoteType extends AbstractType
 
     public function getName()
     {
-        return "ant_photo_rest_vote";
+        return "vote";
     }
 }

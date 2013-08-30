@@ -55,6 +55,18 @@ abstract class Photo implements PhotoInterface {
 	 * @var File $image
 	 */
 	public $image;
+	/**
+	 * number of voter to this photo
+	 * @var int
+	 * @ORM\Column(type="string", nullable=true)
+	 */
+	protected $votes=0;
+	/**
+	 * score of the photo
+	 * @var float
+	 * @ORM\Column(type="float", nullable=true)
+	 */
+	protected $score=null;
 	
 	public function __construct()
 	{
@@ -95,5 +107,19 @@ abstract class Photo implements PhotoInterface {
 	
 	public function setPath($path) {
 		$this->path = $path;
+	}
+	public function getScore() {
+		return $this->score;
+	}
+	
+	public function setScore($score) {
+		$this->score = $score;
+	}
+	public function getVotes() {
+		return $this->votes;
+	}
+	
+	public function setVotes($votes) {
+		$this->votes = $votes;
 	}
 }

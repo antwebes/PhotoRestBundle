@@ -2,6 +2,10 @@
 
 namespace Ant\PhotoRestBundle\ModelManager;
 
+use Ant\PhotoRestBundle\Model\ParticipantInterface;
+
+use Ant\PhotoRestBundle\Model\PhotoInterface;
+
 use Ant\PhotoRestBundle\Model\VoteInterface;
 
 /**
@@ -12,13 +16,32 @@ use Ant\PhotoRestBundle\Model\VoteInterface;
 
 abstract class VoteManager
 {
-	public function saveVote(VoteInterface $vote)
+	/**
+	 * @var PhotoManager
+	 */
+	protected $photoManager;
+	
+	/**
+	 * Constructor.
+	 *
+	 * @param \Doctrine\ORM\EntityManager                  $em
+	 * @param string                                       $class
+	 */
+	public function __construct(PhotoManager $photoManager)
 	{
-		$this->doSaveVote($vote);
+		$this->photoManager = $photoManager;
 	}
 	
-	public function deleteVote(VoteInterface $vote)
+	
+	public function saveVote(VoteInterface $vote, PhotoInterface $photo)
 	{
+		$this->doSaveVote($vote);
+		$this->photoManager->updateScore($photo, $vote->getScore(), '+');
+	}
+	
+	public function deleteVote(VoteInterface $vote, PhotoInterface $photo)
+	{
+		$this->photoManager->updateScore($photo, $vote->getScore(), '-');
 		$this->doDeleteVote($vote);
 	}
 	
@@ -29,6 +52,11 @@ abstract class VoteManager
 		
 		return $vote;
 	}
+	
+	public function findAllVotesOfAnParticipant(ParticipantInterface $participant)
+	{
+		return $this->findAllVotesOfAnParticipant($participant);
+	}
 	/**
 	 * @param string $id
 	 * @return VoteInterface
@@ -36,5 +64,10 @@ abstract class VoteManager
 	public function findVoteById($id)
 	{
 		return $this->findVoteBy(array('id' => $id));
+	}
+	
+	public function findVoteByPhotoAndParticipant($photoId, $participantId)
+	{
+		return $this->findVoteBy(array('photo' => $photoId, 'participant' => $participantId));
 	}
 }

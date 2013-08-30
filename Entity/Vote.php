@@ -20,11 +20,6 @@ use Ant\PhotoRestBundle\Model\Vote as BaseVote;
 * @author Pablo  <pablo@antweb.es>
 */
 abstract class Vote extends BaseVote
-{
-	public function __toString()
-	{
-		return $this->getTitle();
-	}
- 
+{ 
 	
 }

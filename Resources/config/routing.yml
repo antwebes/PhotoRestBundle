@@ -7,6 +7,18 @@ ant_photo_rest_delete:
     defaults: { _controller: AntPhotoRestBundle:Photo:delete }
     methods: [DELETE]
 ant_photo_rest_vote_create:
-    pattern: /vote/{id}
+    pattern: /vote
     defaults: { _controller: AntPhotoRestBundle:Vote:create }
-    methods: [POST, PUT]
+    methods: [POST]
+ant_photo_rest_vote_delete:
+    pattern: /vote/{photoId}
+    defaults: { _controller: AntPhotoRestBundle:Vote:delete }
+    methods: [DELETE]
+ant_photo_rest_vote_show:
+    pattern: /vote/{photoId}
+    defaults: { _controller: AntPhotoRestBundle:Vote:show }
+    methods: [GET]
+ant_photo_rest_vote_show:
+    pattern: /vote
+    defaults: { _controller: AntPhotoRestBundle:Vote:votes }
+    methods: [GET]

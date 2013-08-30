@@ -2,13 +2,11 @@
 
 namespace Ant\PhotoRestBundle\Controller;
 
-use Chatea\ApiBundle\Controller\BaseRestController;
+use Ant\PhotoRestBundle\Controller\BaseRestController;
 
 use Symfony\Component\HttpFoundation\Request;
 
 use Ant\PhotoRestBundle\Entity\Photo;
-use Ant\PhotoRestBundle\Util\ErrorResponse;
-use Ant\PhotoRestBundle\Util;
 use Ant\PhotoRestBundle\Event\AntPhotoRestEvents;
 use Ant\PhotoRestBundle\Event\PhotoEvent;
 
@@ -74,7 +72,7 @@ class PhotoController extends BaseRestController
 	 *		statusCodes={
 	 *         200="Returned when successful",
 	 *         403="Access denied",
-	 *         404="Unable to find Photo entity with code 32"
+	 *         404="Unable to find Photo entity with code 42"
 	 *     }
 	 *  )
 	 */
@@ -84,35 +82,18 @@ class PhotoController extends BaseRestController
 		$photo = $photoManager->findPhotoById($id);
 		
 		if (null === $photo) {
-			$errorResponse = ErrorResponse::createResponse('Unable to find Photo entity', '34');
-			return $this->buildView($errorResponse, 404);
+			return $this->createError('Unable to find Photo entity', '42', '404');
 		}
 		if ($photo->getParticipant() == $this->get('security.context')->getToken()->getUser() ){
 			$path = $photo->getPath();
-			$photo = $photoManager->deleteBadge($photo);
+			$photo = $photoManager->deletePhoto($photo);
 			$dispatcher = $this->container->get('event_dispatcher');
 			$dispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($path));
 		} else{
-			$errorResponse = ErrorResponse::createResponse('Access denied', 'xxxx');
+			return $this->createError('Access denied', '44', '403');
 		}
-		
-		
 		return $this->buildView('Photo deleted', 200);
 		
-	}
-	private function createFormErrorsView($form, $statusCode = 400)
-	{
-		$errors = Util::getAllFormErrorMessages($form);
-		$r = $this->get('api.servicio.error_response')->createResponse($errors, $this->container->getParameter('channel.form.register'));
-		$view = $this->view($r, $statusCode);
-		$view->setFormat('json');
-		return $view;
-	}
-	
-	private function buildFormErrorsView($form)
-	{
-		$view = $this->createFormErrorsView($form);
-		return $this->handleView($view);
 	}
 	/**
 	 * @return Ant\PhotoRestBundle\Upload\PhotoUploader

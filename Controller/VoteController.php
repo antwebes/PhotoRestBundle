@@ -6,11 +6,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use Ant\PhotoRestBundle\Controller\BaseRestController;
+
 /**
  * Vote controller.
- *
  */
-class VoteController
+class VoteController extends BaseRestController
 {
 	/**
 	 * Create a new vote entity
@@ -24,85 +25,119 @@ class VoteController
 	 *     }
 	 *  )
 	 */
-	public function createAction(Request $request, $photoId)
-	{		
+	public function createAction(Request $request)
+	{
+		$dataRequest = $request->request->get('vote');
+		//get id of photo from request
+		$photoId = $dataRequest['photo']; 
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$photo = $photoManager->findPhotoById($photoId);
 		
+		if (!$photo) {
+			return $this->createError('Unable to find Photo entity', '42', '404');
+    	}    	
+    	$currentUser = $this->get('security.context')->getToken()->getUser();
+    	
 		$voteManager = $this->get('ant.photo_rest.manager.vote_manager');
+		$existVote = $voteManager->findVoteByPhotoAndParticipant($photoId, $currentUser->getId());
+		
+		if ($existVote){
+			return $this->createError('You have already voted this photo ', '46', '409');
+		}
+
 		$vote = $voteManager->createVote();
 		
-		$form = $this->get('ant.photo_rest.form_factory.photo.default')->createForm();
+		$form = $this->get('ant.photo_rest.form_factory.vote.default')->createForm();
 		$form->setData($vote);
 		
-		if ($request->isMethod('POST')) {
-			
-			$form->bind($dataRequest);
-			
-			if ($form->isValid()) {
-				
-				$currentUser = $this->get('security.context')->getToken()->getUser();
-				$vote->setParticipant($currentUser);
-				
-				$voteManager->saveVote($vote);
-				//TODO
-				$photoManager->incrementVote();
-				$photoManager->updateScore($form->getData()->getScore());
-				return $this->buildView($vote, 200);
-			}
-			return $this->buildFormErrorsView($form);
-		}		
-		return $this->render(
-				'AntPhotoRestBundle:Vote:add.html.twig',
-				array('form'  => $form->createView())
-		);
+		$form->bind($dataRequest);
+		
+		if ($form->isValid()) {
+						
+			$vote->setParticipant($currentUser);
+			$voteManager->saveVote($vote, $photo);
+			return $this->buildView($vote, 200);
+		}
+		return $this->buildFormErrorsView($form);
 	}
 	/**
-	 * Delete a new photo entity
+	 * Show the vote of a photo
 	 *  @ApiDoc(
-	 *  	description="delete a photo",
-	 *  	output="Ant\PhotoRestBundle\Model\Photo",
+	 *  	description="show a vote",
+	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
 	 *         200="Returned when successful",
-	 *         403="Access denied",
-	 *         404="Unable to find Photo entity with code 32"
+	 *         404="Unable to find Vote or Photo entity with code 42"
 	 *     }
 	 *  )
 	 */
-	public function deleteAction($id)
+	public function showAction($photoId)
 	{
-		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
-		$photo = $photoManager->findPhotoById($id);
+		$result = $this->getPhotoAndVote($photoId);
 		
-		if (null === $photo) {
-			$errorResponse = ErrorResponse::createResponse('Unable to find Photo entity', '34');
-			return $this->buildView($errorResponse, 404);
+		if (is_array($result)){
+			return $this->buildView($result['vote'], 200);
 		}
-		if ($photo->getParticipant() == $this->get('security.context')->getToken()->getUser() ){
-			$path = $photo->getPath();
-			$photo = $photoManager->deleteBadge($photo);
-			$dispatcher = $this->container->get('event_dispatcher');
-			$dispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($path));
-		} else{
-			$errorResponse = ErrorResponse::createResponse('Access denied', 'xxxx');
-		}
-		
-		
-		return $this->buildView('Photo deleted', 200);
-		
+		else return $result;
 	}
-	private function createFormErrorsView($form, $statusCode = 400)
+	/**
+	 * Show all votes of an user
+	 *  @ApiDoc(
+	 *  	description="show a vote of an user",
+	 *  	output="Ant\PhotoRestBundle\Model\Vote",
+	 *		statusCodes={
+	 *         200="Returned when successful",
+	 *     }
+	 *  )
+	 */
+	public function votesAction()
 	{
-		$errors = Util::getAllFormErrorMessages($form);
-		$r = $this->get('api.servicio.error_response')->createResponse($errors, $this->container->getParameter('channel.form.register'));
-		$view = $this->view($r, $statusCode);
-		$view->setFormat('json');
-		return $view;
+		$currentUser = $this->get('security.context')->getToken()->getUser();
+		$votes = $this->get('ant.photo_rest.manager.vote_manager')->findAllVotesOfAnParticipant($currentUser);
+		return $this->buildView($votes, 200);
+	}
+	/**
+	 * Delete a new vote entity
+	 *  @ApiDoc(
+	 *  	description="delete a vote",
+	 *  	output="Ant\PhotoRestBundle\Model\Vote",
+	 *		statusCodes={
+	 *         200="Returned when successful",
+	 *         403="Access denied",
+	 *         404="Unable to find Vote or Photo entity with code 42"
+	 *     }
+	 *  )
+	 */
+	public function deleteAction($photoId)
+	{
+		$result = $this->getPhotoAndVote($photoId);
+		
+		if (is_array($result)){
+			$voteManager->deleteVote($vote, $photo);
+		
+			return $this->buildView('Vote deleted', 200);
+		}
+		else return $result;		
 	}
 	
-	private function buildFormErrorsView($form)
+	private function getPhotoAndVote($photoId)
 	{
-		$view = $this->createFormErrorsView($form);
-		return $this->handleView($view);
+		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
+		$photo = $photoManager->findPhotoById($photoId);
+		
+		if (!$photo) {
+			return $this->createError('Unable to find Photo entity', '42', '404');
+		}
+		$currentUser = $this->get('security.context')->getToken()->getUser();
+		
+		$voteManager = $this->get('ant.photo_rest.manager.vote_manager');
+		$vote = $voteManager->findVoteByPhotoAndParticipant($photoId, $currentUser->getId());
+		
+		if (!$vote) {
+			return $this->createError('Unable to find Vote entity', '42', '404');
+		}
+		
+		return array('vote' => $vote,
+					'photo' => $photo);
 	}
 }

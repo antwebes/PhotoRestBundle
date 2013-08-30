@@ -8,4 +8,4 @@ services:
         arguments: [@doctrine.orm.entity_manager , %ant.photo_rest.model.photo.class%]
     ant.photo_rest.manager.vote_manager:
         class: %ant.photo_rest.entity_manager.vote_manager.class%
-        arguments: [@doctrine.orm.entity_manager , %ant.photo_rest.model.vote.class%]
+        arguments: [@ant.photo_rest.entity_manager.photo_manager, @doctrine.orm.entity_manager , %ant.photo_rest.model.vote.class%]
