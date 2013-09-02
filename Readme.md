@@ -10,3 +10,8 @@ Codes:
 'Access denied', '44', '403'
 
 'You have already voted this photo ', '46', '409'
+
+Upload image by curl
+=====================
+
+curl -v -H "Accept: application/json" -H "Content-Type: multipart/form-data" -X POST -F "title=holaaa" -F "image=@/home/pc/Escritorio/torrente222.jpg" http://url/api/ant/photo?access_token={token}
