@@ -7,7 +7,7 @@ use Gaufrette\Filesystem;
 
 class PhotoUploader
 {
-    private static $allowedMimeTypes = array('image/jpeg', 'image/png', 'image/gif');
+    private static $allowedMimeTypes = array('image/jpeg', 'image/png', 'image/gif', 'application/octet-stream');
 
     private $filesystem;
 

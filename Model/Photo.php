@@ -49,7 +49,7 @@ abstract class Photo implements PhotoInterface {
 	/**
 	 * @Assert\File(
 	 *     maxSize="2000k",
-	 *     mimeTypes={"image/png", "image/jpeg", "image/pjpeg"}
+	 *     mimeTypes={"image/png", "image/jpeg", "image/pjpeg", "application/octet-stream"}
 	 * )
 	 *
 	 * @var File $image
