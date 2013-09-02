@@ -37,7 +37,7 @@ abstract class BaseRestController extends FOSRestController
     	return $this->handleView($view);
     }
     
-    private function createFormErrorsView($form, $statusCode = 400)
+    protected function createFormErrorsView($form, $statusCode = 400)
     {
     	$errors = Util::getAllFormErrorMessages($form);
     	$r = $this->get('api.servicio.error_response')->createResponse($errors, $this->container->getParameter('channel.form.register'));
@@ -46,7 +46,7 @@ abstract class BaseRestController extends FOSRestController
     	return $view;
     }
     
-    private function buildFormErrorsView($form)
+    protected function buildFormErrorsView($form)
     {
     	$view = $this->createFormErrorsView($form);
     	return $this->handleView($view);
