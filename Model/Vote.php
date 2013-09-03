@@ -32,6 +32,10 @@ abstract class Vote implements VoteInterface {
 	protected $publicatedAt;
 	/**
 	 * @ORM\Column(type="float")
+	 * @Assert\Range(
+	 * 		min = 1,
+	 * 		max = 10
+	 * )
 	 */
 	protected $score;
 	

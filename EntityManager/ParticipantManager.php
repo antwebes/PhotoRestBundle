@@ -2,13 +2,11 @@
 
 namespace Ant\PhotoRestBundle\EntityManager;
 
+use Doctrine\ORM\EntityManager;
+use Ant\PhotoRestBundle\ModelManager\ParticipantManager as BasePhotoManager;
 use Ant\PhotoRestBundle\Model\ParticipantInterface;
 
-use Doctrine\ORM\EntityManager;
-use Ant\PhotoRestBundle\ModelManager\PhotoManager as BasePhotoManager;
-use Ant\PhotoRestBundle\Model\PhotoInterface;
-
-class PhotoManager extends BasePhotoManager
+class ParticipantManager extends BasePhotoManager
 {
 	/**
 	 * @var EntityManager
@@ -40,45 +38,16 @@ class PhotoManager extends BasePhotoManager
 		$this->class = $metadata->name;
 	}
 	
+	
 	/**
-	 * Saves a photo
-	 *
-	 * @param PhotoInterface $photo
-	 */
-	protected function doSavePhoto(PhotoInterface $photo)
-	{
-		$this->em->persist($photo);
-		$this->em->flush();
-	}
-	/**
-	 * Finds photos by the given criteria
-	 *
-	 * @param array $criteria
-	 * @return array PhotoInterface
-	 */
-	public function findPhotoBy(array $criteria)
-	{
-		return $this->repository->findBy($criteria);
-	}
-	/**
-	 * Finds one photo by the given criteria
+	 * Finds one participant by the given criteria
 	 *
 	 * @param array $criteria
 	 * @return PhotoInterface
 	 */
-	public function findOnePhotoBy(array $criteria)
+	public function findParticipantBy(array $criteria)
 	{
 		return $this->repository->findOneBy($criteria);
-	}
-	/**
-	 * Deletes a photo
-	 *
-	 * @param PhotoInterface $photo the photo to delete
-	 */
-	public function doDeletePhoto(PhotoInterface $photo)
-	{
-		$this->em->remove($photo);
-		$this->em->flush();
 	}
 	
 	/**

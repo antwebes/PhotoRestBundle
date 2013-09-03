@@ -22,6 +22,7 @@ class PhotoController extends BaseRestController
 	 * Create a new photo entity
 	 *  @ApiDoc(
 	 *  	description="create a photo",
+	 *		section="me/photo",
 	 *  	input="Ant\PhotoRestBundle\FormType\PhotoType",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
 	 *		statusCodes={
@@ -45,7 +46,6 @@ class PhotoController extends BaseRestController
 			$form->bind($dataRequest);
 			
 			if ($form->isValid()) {
-				
 				$currentUser = $this->get('security.context')->getToken()->getUser();
 				$photo->setParticipant($currentUser);
 				if ($request->files->get('image')) $image = $request->files->get('image');
@@ -54,7 +54,6 @@ class PhotoController extends BaseRestController
 				$url = $this->getPhotoUploader()->upload($image);
 				$photo->setPath($url);
 				$photoManager->savePhoto($photo);
-				
 				return $this->buildView($photo, 200);
 			}
 			return $this->buildFormErrorsView($form);
@@ -68,6 +67,7 @@ class PhotoController extends BaseRestController
 	 * Show a photo entity
 	 *  @ApiDoc(
 	 *  	description="show a photo",
+	 *  	section="me/photo",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
 	 *		statusCodes={
 	 *         200="Returned when successful",
@@ -87,9 +87,55 @@ class PhotoController extends BaseRestController
 		
 	}
 	/**
+	 * Lists all me Photo entities.
+	 *  @ApiDoc(
+	 *  	description="List all me photos",
+	 *  	section="me/photo",
+	 *  	output="Ant\PhotoRestBundle\Model\Photo",
+	 *		statusCodes={
+	 *         200="Returned when successful"
+	 *     }
+	 *  )
+	 */
+	public function photosAction()
+	{
+		$currentUser = $this->get('security.context')->getToken()->getUser();
+		
+		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
+		$entities = $photoManager->findAllMePhotos($currentUser);
+		 
+		return $this->buildView($entities, 200);
+	}
+	/**
+	 * Lists all Photo entities of an user.
+	 *  @ApiDoc(
+	 *  	description="List all photos of an user",
+	 *  	section="photo",
+	 *  	output="Ant\PhotoRestBundle\Model\Photo",
+	 *		statusCodes={
+	 *         200="Returned when successful"
+	 *     }
+	 *  )
+	 */
+	public function photosUserAction($id)
+	{
+		$participantManager = $this->get('ant.photo_rest.manager.participant_manager');
+		$participant = $participantManager->findParticipantById($id);
+		
+		if (null === $participant) {
+			return $this->createError('Unable to find User entity', '32', '404');
+		}
+	
+		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
+		$entities = $photoManager->findAllMePhotos($participant);		
+		
+		return $this->buildView($entities, 200);
+	}
+	/**
 	 * Delete a new photo entity
 	 *  @ApiDoc(
 	 *  	description="delete a photo",
+	 *  	section="me/photo",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
 	 *		statusCodes={
 	 *         200="Returned when successful",

@@ -26,6 +26,12 @@ abstract class Photo implements PhotoInterface {
 	protected $participant;
 	
 	/**
+	 * relation with Entity Vote, array of votes 
+	 * @var unknown
+	 */
+	protected $votes;
+	
+	/**
 	 * @ORM\Column(type="datetime", nullable=true)
 	 *
 	 * @Assert\DateTime
@@ -60,7 +66,7 @@ abstract class Photo implements PhotoInterface {
 	 * @var int
 	 * @ORM\Column(type="string", nullable=true)
 	 */
-	protected $votes=0;
+	protected $numberVotes=0;
 	/**
 	 * score of the photo
 	 * @var float
@@ -115,11 +121,11 @@ abstract class Photo implements PhotoInterface {
 	public function setScore($score) {
 		$this->score = $score;
 	}
-	public function getVotes() {
-		return $this->votes;
+	public function getNumberVotes() {
+		return $this->numberVotes;
 	}
 	
-	public function setVotes($votes) {
-		$this->votes = $votes;
+	public function setNumberVotes($numberVotes) {
+		$this->numberVotes = $numberVotes;
 	}
 }

@@ -17,6 +17,7 @@ class VoteController extends BaseRestController
 	 * Create a new vote entity
 	 *  @ApiDoc(
 	 *  	description="create a vote",
+	 *  	section="me/vote",
 	 *  	input="Ant\PhotoRestBundle\FormType\VoteType",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
@@ -63,7 +64,9 @@ class VoteController extends BaseRestController
 	/**
 	 * Show the vote of a photo
 	 *  @ApiDoc(
-	 *  	description="show a vote",
+	 *  	description="show a vote of a photo",
+	 *  	section="vote",
+	 *  	input="photo_id",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
 	 *         200="Returned when successful",
@@ -71,9 +74,9 @@ class VoteController extends BaseRestController
 	 *     }
 	 *  )
 	 */
-	public function showAction($photoId)
+	public function showAction($id)
 	{
-		$result = $this->getPhotoAndVote($photoId);
+		$result = $this->getPhotoAndVote($id);
 		
 		if (is_array($result)){
 			return $this->buildView($result['vote'], 200);
@@ -83,7 +86,8 @@ class VoteController extends BaseRestController
 	/**
 	 * Show all votes of an user
 	 *  @ApiDoc(
-	 *  	description="show a vote of an user",
+	 *  	description="show all votes of an user",
+	 *  	section="me/vote",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
 	 *         200="Returned when successful",
@@ -100,6 +104,8 @@ class VoteController extends BaseRestController
 	 * Delete a new vote entity
 	 *  @ApiDoc(
 	 *  	description="delete a vote",
+	 *  	section="me/vote",
+	 *      input="Photo_id",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
 	 *         200="Returned when successful",
@@ -108,13 +114,12 @@ class VoteController extends BaseRestController
 	 *     }
 	 *  )
 	 */
-	public function deleteAction($photoId)
+	public function deleteAction($id)
 	{
-		$result = $this->getPhotoAndVote($photoId);
+		$result = $this->getPhotoAndVote($id);
 		
 		if (is_array($result)){
-			$voteManager->deleteVote($vote, $photo);
-		
+			$this->get('ant.photo_rest.manager.vote_manager')->deleteVote($result['vote'], $result['photo']);
 			return $this->buildView('Vote deleted', 200);
 		}
 		else return $result;		

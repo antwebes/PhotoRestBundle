@@ -9,22 +9,27 @@ ant_photo_rest_delete:
 ant_photo_rest_show:
     pattern: /photo/{id}
     defaults: { _controller: AntPhotoRestBundle:Photo:show }
-    methods: [GET]   
-    
+    methods: [GET]
+ant_photo_rest_show_me_all:
+    pattern: /photos
+    defaults: { _controller: AntPhotoRestBundle:Photo:photos }
+    methods: [GET]
+
+
     
 ant_photo_rest_vote_create:
     pattern: /vote
     defaults: { _controller: AntPhotoRestBundle:Vote:create }
     methods: [POST]
 ant_photo_rest_vote_delete:
-    pattern: /vote/{photoId}
+    pattern: /vote/{id}
     defaults: { _controller: AntPhotoRestBundle:Vote:delete }
     methods: [DELETE]
 ant_photo_rest_vote_show:
-    pattern: /vote/{photoId}
+    pattern: /vote/{id}
     defaults: { _controller: AntPhotoRestBundle:Vote:show }
     methods: [GET]
-ant_photo_rest_vote_show:
+ant_photo_rest_vote_all_show:
     pattern: /vote
     defaults: { _controller: AntPhotoRestBundle:Vote:votes }
     methods: [GET]

@@ -1,0 +1,4 @@
+ant_photo_rest_show_user_all:
+    pattern: /photos/user/{id}
+    defaults: { _controller: AntPhotoRestBundle:Photo:photosUser }
+    methods: [GET]
