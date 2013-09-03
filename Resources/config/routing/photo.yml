@@ -1,4 +1,8 @@
 ant_photo_rest_show_user_all:
-    pattern: /photos/user/{id}
+    pattern: /user/{id}/photos
     defaults: { _controller: AntPhotoRestBundle:Photo:photosUser }
+    methods: [GET]
+ant_photo_rest_vote_show:
+    pattern: /photo/{id}/votes
+    defaults: { _controller: AntPhotoRestBundle:Vote:show }
     methods: [GET]
