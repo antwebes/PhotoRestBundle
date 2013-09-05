@@ -12,6 +12,12 @@ use Ant\PhotoRestBundle\Event\PhotoEvent;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use JMS\SecurityExtraBundle\Annotation\SecureParam;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
+use Chatea\ApiBundle\Entity\User;
+
 /**
  * Foto controller.
  *
@@ -22,7 +28,7 @@ class PhotoController extends BaseRestController
 	 * Create a new photo entity
 	 *  @ApiDoc(
 	 *  	description="create a photo",
-	 *		section="me/photo",
+	 *		section="propietario",
 	 *  	input="Ant\PhotoRestBundle\FormType\PhotoType",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
 	 *		statusCodes={
@@ -30,8 +36,10 @@ class PhotoController extends BaseRestController
 	 *         400="Bad request"
 	 *     }
 	 *  )
+	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
+	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"})
 	 */
-	public function createAction(Request $request)
+	public function createAction(User $user, Request $request)
 	{
 		$dataRequest = $request->request->all();
 		
@@ -46,8 +54,10 @@ class PhotoController extends BaseRestController
 			$form->bind($dataRequest);
 			
 			if ($form->isValid()) {
-				$currentUser = $this->get('security.context')->getToken()->getUser();
-				$photo->setParticipant($currentUser);
+				
+// 				$currentUser = $this->get('ant.photo_rest.manager.participant_manager')->findParticipantById($id);
+// 				$currentUser = $this->get('security.context')->getToken()->getUser();
+				$photo->setParticipant($user);
 				if ($request->files->get('image')) $image = $request->files->get('image');
 				else $image = $form->getData()->getImage();
 				
@@ -67,7 +77,7 @@ class PhotoController extends BaseRestController
 	 * Show a photo entity
 	 *  @ApiDoc(
 	 *  	description="show a photo",
-	 *  	section="me/photo",
+	 *  	section="photo",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
 	 *		statusCodes={
 	 *         200="Returned when successful",
@@ -87,30 +97,10 @@ class PhotoController extends BaseRestController
 		
 	}
 	/**
-	 * Lists all me Photo entities.
-	 *  @ApiDoc(
-	 *  	description="List all me photos",
-	 *  	section="me/photo",
-	 *  	output="Ant\PhotoRestBundle\Model\Photo",
-	 *		statusCodes={
-	 *         200="Returned when successful"
-	 *     }
-	 *  )
-	 */
-	public function photosAction()
-	{
-		$currentUser = $this->get('security.context')->getToken()->getUser();
-		
-		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
-		$entities = $photoManager->findAllMePhotos($currentUser);
-		 
-		return $this->buildView($entities, 200);
-	}
-	/**
 	 * Lists all Photo entities of an user.
 	 *  @ApiDoc(
 	 *  	description="List all photos of an user",
-	 *  	section="photo",
+	 *  	section="user",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
 	 *		statusCodes={
 	 *         200="Returned when successful"
@@ -132,10 +122,10 @@ class PhotoController extends BaseRestController
 		return $this->buildView($entities, 200);
 	}
 	/**
-	 * Delete a new photo entity
+	 * Delete a photo entity
 	 *  @ApiDoc(
 	 *  	description="delete a photo",
-	 *  	section="me/photo",
+	 *  	section="photo",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
 	 *		statusCodes={
 	 *         200="Returned when successful",
@@ -143,16 +133,18 @@ class PhotoController extends BaseRestController
 	 *         404="Unable to find Photo entity with code 42"
 	 *     }
 	 *  )
+	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
+	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find", "id" = "user_id"})
 	 */
-	public function deleteAction($id)
+	public function deleteAction(User $user, $photo_id)
 	{
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
-		$photo = $photoManager->findPhotoById($id);
+		$photo = $photoManager->findPhotoById($photo_id);
 		
 		if (null === $photo) {
 			return $this->createError('Unable to find Photo entity', '42', '404');
 		}
-		if ($photo->getParticipant() == $this->get('security.context')->getToken()->getUser() ){
+		if ($photo->getParticipant() == $this->get('ant.photo_rest.manager.participant_manager')->findParticipantById($user) ){
 			$path = $photo->getPath();
 			$photo = $photoManager->deletePhoto($photo);
 			$dispatcher = $this->container->get('event_dispatcher');
