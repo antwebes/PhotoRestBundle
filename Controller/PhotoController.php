@@ -28,7 +28,7 @@ class PhotoController extends BaseRestController
 	 * Create a new photo entity
 	 *  @ApiDoc(
 	 *  	description="create a photo",
-	 *		section="propietario",
+	 *		section="photo",
 	 *  	input="Ant\PhotoRestBundle\FormType\PhotoType",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
 	 *		statusCodes={
@@ -100,7 +100,7 @@ class PhotoController extends BaseRestController
 	 * Lists all Photo entities of an user.
 	 *  @ApiDoc(
 	 *  	description="List all photos of an user",
-	 *  	section="user",
+	 *  	section="photo",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
 	 *		statusCodes={
 	 *         200="Returned when successful"

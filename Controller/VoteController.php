@@ -23,7 +23,7 @@ class VoteController extends BaseRestController
 	 * Create a new vote entity
 	 *  @ApiDoc(
 	 *  	description="create a vote",
-	 *  	section="propietario",
+	 *  	section="photo",
 	 *  	input="Ant\PhotoRestBundle\FormType\VoteType",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
@@ -97,7 +97,7 @@ class VoteController extends BaseRestController
 	 * Show all votes of an user
 	 *  @ApiDoc(
 	 *  	description="show all votes of an user",
-	 *  	section="propietario",
+	 *  	section="photo",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
 	 *         200="Returned when successful",
@@ -116,7 +116,7 @@ class VoteController extends BaseRestController
 	 * Delete a new vote entity
 	 *  @ApiDoc(
 	 *  	description="delete a vote",
-	 *  	section="vote",
+	 *  	section="photo",
 	 *      input="Photo_id",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
