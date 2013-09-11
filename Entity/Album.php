@@ -11,7 +11,7 @@
 
 namespace Ant\PhotoRestBundle\Entity;
 
-use Ant\PhotoRestBundle\Model\Photo as BasePhoto;
+use Ant\PhotoRestBundle\Model\Album as BaseAlbum;
 use Doctrine\ORM\Mapping as ORM;
 /**
 *
@@ -19,13 +19,22 @@ use Doctrine\ORM\Mapping as ORM;
 *
 * @author Pablo  <pablo@antweb.es>
 */
-abstract class Photo extends BasePhoto
+abstract class Album extends BaseAlbum
 {
 	/**
-	 * @ORM\ManyToOne(targetEntity="Album")
-	 * @ORM\JoinColumn(name="album_id", referencedColumnName="id")
+	 * @ORM\Column(type="string", length=255, name="title", nullable=true)
 	 */
-	protected $album;
+	protected $title;
+	
+	/**
+	 * @ORM\Column(type="string", length=255, name="description", nullable=true)
+	 */
+	protected $description;
+	
+	/**
+	 * @ORM\OneToMany(targetEntity="Photo", mappedBy="album")
+	 */
+	private $photos;
 	
 	public function __toString()
 	{

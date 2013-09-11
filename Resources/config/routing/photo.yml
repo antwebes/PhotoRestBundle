@@ -1,12 +1,16 @@
 ant_photo_rest_show_user_all:
-    pattern: /user/{id}/photos
+    pattern: /users/{id}/photos
     defaults: { _controller: AntPhotoRestBundle:Photo:photosUser }
     methods: [GET]
 ant_photo_rest_vote_show:
-    pattern: /photo/{id}/votes
+    pattern: /photos/{id}/votes
     defaults: { _controller: AntPhotoRestBundle:Vote:show }
     methods: [GET]
 ant_photo_rest_show:
-    pattern: /photo/{id}
+    pattern: /photos/{id}
     defaults: { _controller: AntPhotoRestBundle:Photo:show }
     methods: [GET]
+ant_photo_rest_album_create:
+    pattern: /users/{id}/album
+    defaults: { _controller: AntPhotoRestBundle:Album:create }
+    methods: [POST]

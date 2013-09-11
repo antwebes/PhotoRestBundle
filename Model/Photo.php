@@ -74,6 +74,8 @@ abstract class Photo implements PhotoInterface {
 	 */
 	protected $score=null;
 	
+	protected $album;
+	
 	public function __construct()
 	{
 		$this->publicatedAt = new \DateTime('now');
