@@ -3,7 +3,7 @@ parameters:
     ant.photo_rest.entity_manager.album_manager.class: Ant\PhotoRestBundle\EntityManager\AlbumManager
     ant.photo_rest.entity_manager.vote_manager.class: Ant\PhotoRestBundle\EntityManager\VoteManager
     ant.photo_rest.entity_manager.participant_manager.class: Ant\PhotoRestBundle\EntityManager\ParticipantManager
-    ant.photo_rest.model.participant_interface.class: Chatea\ApiBundle\Entity\User
+    #ant.photo_rest.model.participant_interface.class: Chatea\ApiBundle\Entity\User
     
 services:
     ant.photo_rest.entity_manager.photo_manager:

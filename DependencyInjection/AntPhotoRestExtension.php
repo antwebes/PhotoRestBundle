@@ -36,6 +36,10 @@ class AntPhotoRestExtension extends Extension
         }
         $loader->load(sprintf('%s.yml', $config['db_driver']));
 
+        $container->setParameter('ant.photo_rest.model.participant_interface.class', $config['participant_class']);
+        $container->setParameter('ant.photo_rest.model.photo.class', $config['photo_class']);
+        $container->setParameter('ant.photo_rest.model.album.class', $config['album_class']);
+        $container->setParameter('ant.photo_rest.model.vote.class', $config['vote_class']);
 
 //         $container->setParameter('ant_badge.badge_class', $config['badge_class']);
 //         $container->setParameter('ant_badge.rank_class', $config['rank_class']);

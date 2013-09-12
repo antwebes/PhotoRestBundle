@@ -72,9 +72,9 @@ class VoteController extends BaseRestController
 		return $this->buildFormErrorsView($form);
 	}
 	/**
-	 * Show the vote of a photo
+	 * Show my vote of a photo of the user logged
 	 *  @ApiDoc(
-	 *  	description="show a vote of a photo",
+	 *  	description="show the vote of a photo of the user logged",
 	 *  	section="photo",
 	 *  	input="photo_id",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",

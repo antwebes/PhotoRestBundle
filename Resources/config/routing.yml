@@ -6,10 +6,6 @@ ant_photo_rest_delete:
     pattern: /{user_id}/photo/{photo_id}
     defaults: { _controller: AntPhotoRestBundle:Photo:delete }
     methods: [DELETE]
-ant_photo_rest_show_me_all:
-    pattern: /{id}/photos
-    defaults: { _controller: AntPhotoRestBundle:Photo:photos }
-    methods: [GET]
 
 
     
