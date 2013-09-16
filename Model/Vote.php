@@ -4,9 +4,6 @@ namespace Ant\PhotoRestBundle\Model;
 
 use Ant\PhotoRestBundle\Model\VoteInterface;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
-use Doctrine\ORM\Mapping as ORM;
 
 abstract class Vote implements VoteInterface {
 		
@@ -24,19 +21,8 @@ abstract class Vote implements VoteInterface {
 	 */
 	protected $photo;
 	
-	/**
-	 * @ORM\Column(type="datetime")
-	 *
-	 * @Assert\Date
-	 */
 	protected $publicatedAt;
-	/**
-	 * @ORM\Column(type="float")
-	 * @Assert\Range(
-	 * 		min = 1,
-	 * 		max = 10
-	 * )
-	 */
+	
 	protected $score;
 	
 	public function __construct()

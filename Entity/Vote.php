@@ -13,6 +13,11 @@ namespace Ant\PhotoRestBundle\Entity;
 
 use Ant\PhotoRestBundle\Model\Vote as BaseVote;
 
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\Groups;
+
+
 /**
 *
 * Must be extended and properly mapped by the end developer.
@@ -21,5 +26,18 @@ use Ant\PhotoRestBundle\Model\Vote as BaseVote;
 */
 abstract class Vote extends BaseVote
 { 
-	
+	/**
+	 * @ORM\Column(type="datetime")
+	 * @Assert\Date
+	 * 
+	 */
+	protected $publicatedAt;
+	/**
+	 * @ORM\Column(type="float")
+	 * @Assert\Range(
+	 * 		min = 1,
+	 * 		max = 10
+	 * ) 
+	 */
+	protected $score;
 }

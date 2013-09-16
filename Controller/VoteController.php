@@ -44,13 +44,10 @@ class VoteController extends BaseRestController
 		
 		if (!$photo) {
 			return $this->createError('Unable to find Photo entity', '42', '404');
-    	}    	
-    	
-    	$participantManager = $this->get('ant.photo_rest.manager.participant_manager');
-    	$currentUser = $participantManager->findParticipantById($id);
+    	}
     	
 		$voteManager = $this->get('ant.photo_rest.manager.vote_manager');
-		$existVote = $voteManager->findVoteByPhotoAndParticipant($photoId, $currentUser->getId());
+		$existVote = $voteManager->findVoteByPhotoAndParticipant($photoId, $user->getId());
 		
 		if ($existVote){
 			return $this->createError('You have already voted this photo ', '46', '409');
@@ -65,7 +62,7 @@ class VoteController extends BaseRestController
 		
 		if ($form->isValid()) {
 						
-			$vote->setParticipant($currentUser);
+			$vote->setParticipant($user);
 			$voteManager->saveVote($vote, $photo);
 			return $this->buildView($vote, 200);
 		}
@@ -89,7 +86,7 @@ class VoteController extends BaseRestController
 		$result = $this->getPhotoAndVote($id);
 		
 		if (is_array($result)){
-			return $this->buildView($result['vote'], 200);
+			return $this->buildView($result['vote'], 200, 'vote_list');
 		}
 		else return $result;
 	}
@@ -110,7 +107,7 @@ class VoteController extends BaseRestController
 		$currentUser = $participantManager->findParticipantById($id);
 		
 		$votes = $this->get('ant.photo_rest.manager.vote_manager')->findAllVotesOfAnParticipant($currentUser);
-		return $this->buildView($votes, 200);
+		return $this->buildView($votes, 200, 'vote_list');
 	}
 	/**
 	 * Delete a new vote entity

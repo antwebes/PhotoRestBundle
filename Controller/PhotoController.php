@@ -86,7 +86,7 @@ class PhotoController extends BaseRestController
 	 *     }
 	 *  )
 	 */
-	public function showAction($id)
+	public function getShowAction($id)
 	{
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$photo = $photoManager->findPhotoById($id);
@@ -94,11 +94,11 @@ class PhotoController extends BaseRestController
 		if (null === $photo) {
 			return $this->createError('Unable to find Photo entity', '42', '404');
 		}
-		return $this->buildView($photo, 200);
+		return $this->buildView($photo, 200, 'vote_list');
 		
 	}
 	/**
-	 * Lists all Photo entities of an user.
+	 * List all Photo entities of an user.
 	 * @ApiDoc(
 	 *  	description="List all photos of an user",
 	 *  	section="photo",
@@ -120,7 +120,7 @@ class PhotoController extends BaseRestController
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$entities = $photoManager->findAllMePhotos($participant);		
 		
-		return $this->buildView($entities, 200);
+		return $this->buildView($entities, 200, 'photo_list');
 	}
 	/**
 	 * Delete a photo entity
