@@ -11,6 +11,14 @@ ant_photo_rest_show:
     defaults: { _controller: AntPhotoRestBundle:Photo:show }
     methods: [GET]
 ant_photo_rest_album_create:
-    pattern: /users/{id}/album
+    pattern: /users/{id}/albums
     defaults: { _controller: AntPhotoRestBundle:Album:create }
     methods: [POST]
+ant_photo_rest_album_delete:
+    pattern: /users/{user_id}/albums/{album_id}
+    defaults: { _controller: AntPhotoRestBundle:Album:delete }
+    methods: [DELETE]
+ant_photo_rest_delete:
+    pattern: /photos/{photo_id}
+    defaults: { _controller: AntPhotoRestBundle:Photo:delete }
+    methods: [DELETE]

@@ -12,7 +12,10 @@
 namespace Ant\PhotoRestBundle\Entity;
 
 use Ant\PhotoRestBundle\Model\Album as BaseAlbum;
+use Ant\PhotoRestBundle\Model\PhotoInterface;
+
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 /**
 *
 * Must be extended and properly mapped by the end developer.
@@ -34,12 +37,42 @@ abstract class Album extends BaseAlbum
 	/**
 	 * @ORM\OneToMany(targetEntity="Photo", mappedBy="album")
 	 */
-	private $photos;
+	protected $photos;
+	
+	/**
+	 * Participant that created the photo
+	 *
+	 * @var ParticipantInterface
+	 */
+	protected $participant;
 	
 	public function __toString()
 	{
 		return $this->getTitle();
 	}
  
+	public function __construct()
+	{
+		$this->photos = new ArrayCollection();
+	}
+	
+	public function setPhotos($photos)
+	{
+		foreach($photos as $photo){
+			$photo->setAlbum($this);
+		}
+		$this->photos = $photos;			
+	}
+	
+	public function addPhoto(PhotoInterface $photo)
+	{
+		$this->photos->add($photo);
+		$photo->setAlbum($this);
+	}
+	
+	public function getPhotos()
+	{
+		return $this->photos;
+	}
 	
 }

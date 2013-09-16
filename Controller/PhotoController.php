@@ -13,6 +13,7 @@ use Ant\PhotoRestBundle\Event\PhotoEvent;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use JMS\SecurityExtraBundle\Annotation\SecureParam;
+use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
@@ -26,7 +27,7 @@ class PhotoController extends BaseRestController
 {
 	/**
 	 * Create a new photo entity
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="create a photo",
 	 *		section="photo",
 	 *  	input="Ant\PhotoRestBundle\FormType\PhotoType",
@@ -75,7 +76,7 @@ class PhotoController extends BaseRestController
 	}
 	/**
 	 * Show a photo entity
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="show a photo",
 	 *  	section="photo",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
@@ -98,7 +99,7 @@ class PhotoController extends BaseRestController
 	}
 	/**
 	 * Lists all Photo entities of an user.
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="List all photos of an user",
 	 *  	section="photo",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
@@ -123,7 +124,7 @@ class PhotoController extends BaseRestController
 	}
 	/**
 	 * Delete a photo entity
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="delete a photo",
 	 *  	section="photo",
 	 *  	output="Ant\PhotoRestBundle\Model\Photo",
@@ -133,10 +134,8 @@ class PhotoController extends BaseRestController
 	 *         404="Unable to find Photo entity with code 42"
 	 *     }
 	 *  )
-	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
-	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find", "id" = "user_id"})
 	 */
-	public function deleteAction(User $user, $photo_id)
+	public function deleteAction($photo_id)
 	{
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$photo = $photoManager->findPhotoById($photo_id);
@@ -144,17 +143,94 @@ class PhotoController extends BaseRestController
 		if (null === $photo) {
 			return $this->createError('Unable to find Photo entity', '42', '404');
 		}
-		if ($photo->getParticipant() == $this->get('ant.photo_rest.manager.participant_manager')->findParticipantById($user) ){
-			$path = $photo->getPath();
-			$photo = $photoManager->deletePhoto($photo);
-			$dispatcher = $this->container->get('event_dispatcher');
-			$dispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($path));
-		} else{
-			return $this->createError('Access denied', '44', '403');
-		}
+		
+		$securityContext = $this->container->get('security.context');
+		
+		$user = $securityContext->getToken()->getUser();
+		//if user is not owner or has not Role Admin or application
+		if ( !($photoManager->isOwner($user, $photo) or $securityContext->isGranted(array(new Expression('hasRole("ROLE_ADMIN") or hasRole("ROLE_APPLICATION")')))))
+			return $this->createError('This user has no permission for this action', '32', '403');
+				
+		$path = $photo->getPath();
+		$photo = $photoManager->deletePhoto($photo);
+		
+		$dispatcher = $this->container->get('event_dispatcher');
+		$dispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($path));
+		
 		return $this->buildView('Photo deleted', 200);
 		
 	}
+	
+	/**
+	 * Insert a photo entity into album id
+	 * @ApiDoc(
+	 *  	description="Insert a photo entity into album id",
+	 *		section="photo",
+	 *  	output="message confirmation",
+	 *		statusCodes={
+	 *         200="photo inserted",
+	 *         400="Bad request"
+	 *     }
+	 *  )
+	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
+	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find", "id" = "user_id"})
+	 */
+	public function insertToAlbumAction(User $user, $photo_id, $album_id)
+	{
+		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
+		
+		$photo = $photoManager->findPhotoById($photo_id);		
+		if (!$photo) return $this->createError('Unable to find Photo entity', '42', '404');
+		
+		$album = $this->get('ant.photo_rest.manager.album_manager')->findAlbumById($album_id);		
+		if (!$album) return $this->createError('Unable to find Album entity', '42', '404');
+		
+		ldd($album->getPhotos()->getValues());
+		$securityContext = $this->container->get('security.context');
+		
+		if ( !($photoManager->isOwner($user, $photo) or $this->get('ant.photo_rest.manager.album_manager')->isOwner($user, $album)
+				or $securityContext->isGranted(array(new Expression('hasRole("ROLE_ADMIN") or hasRole("ROLE_APPLICATION")')))
+				 )) return $this->createError('This user has no permission for this action', '32', '403');
+			
+		$photoManager->insertToAlbum($photo, $album);
+		
+		return $this->buildView('Photo inserted', 200);
+	}
+	
+	/**
+	 * Delete a photo entity of an album id
+	 * @ApiDoc(
+	 *  	description="Delete a photo entity of an album id",
+	 *		section="photo",
+	 *  	output="message confirmation",
+	 *		statusCodes={
+	 *         200="photo deleted of an album",
+	 *         400="Bad request"
+	 *     }
+	 *  )
+	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
+	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find", "id" = "user_id"})
+	 */
+	public function deleteOfAlbumAction(User $user, $photo_id)
+	{
+		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
+	
+		$photo = $photoManager->findPhotoById($photo_id);
+		if (!$photo) return $this->createError('Unable to find Photo entity', '42', '404');
+	
+		$securityContext = $this->container->get('security.context');
+		
+		if ( !($photoManager->isOwner($user, $photo)
+				or $securityContext->isGranted(array(new Expression('hasRole("ROLE_ADMIN") or hasRole("ROLE_APPLICATION")')))
+		)) return $this->createError('This user has no permission for this action', '32', '403');
+		
+		$album = $photo->getAlbum();
+			
+		$photoManager->deleteOfAlbum($photo, $album);
+	
+		return $this->buildView('Photo deleted of Album', 200);
+	}
+	
 	/**
 	 * @return Ant\PhotoRestBundle\Upload\PhotoUploader
 	 */

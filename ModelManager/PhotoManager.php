@@ -3,8 +3,8 @@
 namespace Ant\PhotoRestBundle\ModelManager;
 
 use Ant\PhotoRestBundle\Model\ParticipantInterface;
-
 use Ant\PhotoRestBundle\Model\PhotoInterface;
+use Ant\PhotoRestBundle\Model\AlbumInterface;
 
 /**
  * With this class you can create a entity Photo, without class final and independent of ORM
@@ -70,6 +70,27 @@ abstract class PhotoManager
 			$photo->setScore($newScore);
 			$photo->setNumberVotes($votesOld - 1);
 		}
+		
+		$this->doSavePhoto($photo);
+	}
+	
+	public function isOwner(ParticipantInterface $user, PhotoInterface $photo)
+	{
+		return ($user->getId() == $photo->getParticipant()->getId());
+	}
+	
+	public function insertToAlbum(PhotoInterface $photo, AlbumInterface $album)
+	{
+// 		$photo->setAlbum($album);
+		$album->addPhoto($photo);
+		
+		$this->doSavePhoto($photo);		
+	}
+	
+	public function deleteOfAlbum(PhotoInterface $photo, AlbumInterface $album)
+	{
+		$album->getPhotos()->removeElement($photo);
+		$photo->setAlbum(null);
 		
 		$this->doSavePhoto($photo);
 	}

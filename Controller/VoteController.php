@@ -21,7 +21,7 @@ class VoteController extends BaseRestController
 {
 	/**
 	 * Create a new vote entity
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="create a vote",
 	 *  	section="photo",
 	 *  	input="Ant\PhotoRestBundle\FormType\VoteType",
@@ -73,7 +73,7 @@ class VoteController extends BaseRestController
 	}
 	/**
 	 * Show my vote of a photo of the user logged
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="show the vote of a photo of the user logged",
 	 *  	section="photo",
 	 *  	input="photo_id",
@@ -95,7 +95,7 @@ class VoteController extends BaseRestController
 	}
 	/**
 	 * Show all votes of an user
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="show all votes of an user",
 	 *  	section="photo",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
@@ -114,7 +114,7 @@ class VoteController extends BaseRestController
 	}
 	/**
 	 * Delete a new vote entity
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="delete a vote",
 	 *  	section="photo",
 	 *      input="Photo_id",

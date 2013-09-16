@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use JMS\SecurityExtraBundle\Annotation\SecureParam;
+use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
@@ -22,7 +23,7 @@ class AlbumController extends BaseRestController
 {
 	/**
 	 * Create a new album entity
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="create an album",
 	 *		section="photo",
 	 *  	input="Ant\PhotoRestBundle\FormType\AlbumType",
@@ -58,9 +59,9 @@ class AlbumController extends BaseRestController
 	
 	/**
 	 * Deletes an Album entity.
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="Delete an album",
-	 *  	section="album",
+	 *  	section="photo",
 	 *  	output="Chatea\ApiBundle\Entity\Album",
 	 *		statusCodes={
 	 *         200="Returned when successful",
@@ -68,12 +69,22 @@ class AlbumController extends BaseRestController
 	 *         404="Unable to find Channel entity with code 32"
 	 *     }
 	 *  )
-	 *  @ParamConverter("album", class="FotoBundle:Album", options={"error" = "album.entity.unable_find"})
-	 *  @SecureParam(name="album", permissions="OWNER,HAS_ROLE_ROLE_ADMIN")
+	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
+	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"}, options={"id" = "user_id"})
+	 * 
 	 */
-	public function deleteAction(Album $album)
+	public function deleteAction(User $user, $album_id)
 	{
-		$this->get('ant.photo_rest.manager.album')->delete($channel);
+		$album = $this->get('ant.photo_rest.manager.album_manager')->findAlbumById($album_id);
+		
+		if (!$album) return $this->createError('Unable to find Album entity', '42', '404');
+		
+		$securityContext = $this->container->get('security.context');
+		if (!($this->get('ant.photo_rest.manager.album_manager')->isOwner($user, $album) or $securityContext->isGranted(array(new Expression('hasRole("ROLE_ADMIN") or hasRole("ROLE_APPLICATION")'))))){
+			return $this->createError('This user has no permission for this action', '32', '403');
+		}
+		
+		$this->get('ant.photo_rest.manager.album_manager')->delete($album);
 			
 		return $this->buildView('Album deleted', 200);
 	}

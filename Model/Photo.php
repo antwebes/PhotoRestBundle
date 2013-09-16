@@ -130,4 +130,14 @@ abstract class Photo implements PhotoInterface {
 	public function setNumberVotes($numberVotes) {
 		$this->numberVotes = $numberVotes;
 	}
+	
+	public function setAlbum($album)
+	{
+		$this->album = $album;
+	}
+	
+	public function getAlbum()
+	{
+		return $this->album;
+	}
 }

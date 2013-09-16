@@ -16,6 +16,10 @@ abstract class Album implements AlbumInterface
 	
 	protected $description;
 	
+	private $photos;
+	
+	
+	
 	/**
 	 * @see Ant\PhotoRestBundle\Model\FotoInterface::setParticipant()
 	 */

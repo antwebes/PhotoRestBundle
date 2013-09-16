@@ -23,7 +23,7 @@ abstract class Photo extends BasePhoto
 {
 	/**
 	 * @ORM\ManyToOne(targetEntity="Album")
-	 * @ORM\JoinColumn(name="album_id", referencedColumnName="id")
+	 * @ORM\JoinColumn(name="album_id", referencedColumnName="id", onDelete="SET NULL")
 	 */
 	protected $album;
 	

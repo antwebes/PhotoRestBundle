@@ -64,7 +64,7 @@ class AlbumManager extends BaseAlbumManager
 	 *
 	 * @param AlbumInterface $album the album to delete
 	 */
-	public function doDeleteAlbum(AlbumInterface $album)
+	public function doDelete(AlbumInterface $album)
 	{
 		$this->em->remove($album);
 		$this->em->flush();
