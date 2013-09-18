@@ -16,12 +16,14 @@ use Ant\PhotoRestBundle\Model\Vote as BaseVote;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
 
 
 /**
 *
 * Must be extended and properly mapped by the end developer.
-*
+*@ExclusionPolicy("all")
 * @author Pablo  <pablo@antweb.es>
 */
 abstract class Vote extends BaseVote
@@ -29,7 +31,7 @@ abstract class Vote extends BaseVote
 	/**
 	 * @ORM\Column(type="datetime")
 	 * @Assert\Date
-	 * 
+	 * @Expose
 	 */
 	protected $publicatedAt;
 	/**
@@ -38,6 +40,7 @@ abstract class Vote extends BaseVote
 	 * 		min = 1,
 	 * 		max = 10
 	 * ) 
+	 * @Expose
 	 */
 	protected $score;
 }

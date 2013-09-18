@@ -64,7 +64,7 @@ class VoteController extends BaseRestController
 						
 			$vote->setParticipant($user);
 			$voteManager->saveVote($vote, $photo);
-			return $this->buildView($vote, 200);
+			return $this->buildResourceView($vote, 200);
 		}
 		return $this->buildFormErrorsView($form);
 	}
@@ -86,7 +86,7 @@ class VoteController extends BaseRestController
 		$result = $this->getPhotoAndVote($id);
 		
 		if (is_array($result)){
-			return $this->buildView($result['vote'], 200, 'vote_list');
+			return $this->buildResourceView($result['vote'], 200, 'vote_list');
 		}
 		else return $result;
 	}
@@ -107,7 +107,7 @@ class VoteController extends BaseRestController
 		$currentUser = $participantManager->findParticipantById($id);
 		
 		$votes = $this->get('ant.photo_rest.manager.vote_manager')->findAllVotesOfAnParticipant($currentUser);
-		return $this->buildView($votes, 200, 'vote_list');
+		return $this->buildPagedView($votes, $currentUser, 'ant_photo_rest_vote_all_show', 200, 'vote_list');
 	}
 	/**
 	 * Delete a new vote entity
@@ -155,5 +155,45 @@ class VoteController extends BaseRestController
 		
 		return array('vote' => $vote,
 					'photo' => $photo);
+	}
+	
+	private function buildPagedView($collection, $entity, $route, $statusCode, $contextGroup = null)
+	{
+		$resourceBuilder = $this->get('hateoas.resource_builder');
+		$paginator = $this->get('paginator');
+		$page = $this->getPage();
+	
+		try {
+			$collection = $paginator->paginate($collection, $page);$collection->getNbResults();
+			$resource = $resourceBuilder->createCollection($collection, 'Ant\PhotoBundle\Entity\Vote',
+									array(),
+									array(
+									  array(
+										'rel' => 'self', 
+										'definition' => array('route' => $route, 'parameters' => array('id'), 'rel' => 'self'), 
+										'data' => $entity
+										)
+									  ) 
+									);
+			
+			return $this->buildView($resource, $statusCode, $contextGroup);
+		}catch(OutOfRangeCurrentPageException $e){
+			return $this->customError404('page.not_found');
+		}catch(\Exception $ee){
+			ldd($ee);
+		}
+	}
+	
+	private function buildResourceView($entity, $statusCode, $contextGroup = null)
+	{
+		$resourceBuilder = $this->get('hateoas.resource_builder');
+		$resource = $resourceBuilder->create($entity);
+	
+		return $this->buildView($resource, $statusCode, $contextGroup);
+	}
+	
+	private function getPage()
+	{
+		return (int)$this->getRequest()->get('page', 1);
 	}
 }

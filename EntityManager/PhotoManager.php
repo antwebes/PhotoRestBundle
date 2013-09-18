@@ -5,6 +5,7 @@ namespace Ant\PhotoRestBundle\EntityManager;
 use Ant\PhotoRestBundle\Model\ParticipantInterface;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Ant\PhotoRestBundle\ModelManager\PhotoManager as BasePhotoManager;
 use Ant\PhotoRestBundle\Model\PhotoInterface;
 
@@ -58,7 +59,21 @@ class PhotoManager extends BasePhotoManager
 	 */
 	public function findPhotoBy(array $criteria)
 	{
-		return $this->repository->findBy($criteria);
+		$qb = $this->repository->createQueryBuilder('p')->select('p');
+		$whereConditions = array();
+		
+		
+		foreach($criteria as $name => $value){
+		  $whereConditions[] = $qb->expr()->eq('p.'.$name, ":".$name);
+		  $qb->setParameter(":".$name, $value);
+		}
+		
+		if(count($whereConditions) > 0){
+		  $whereSql = call_user_func_array(array($qb->expr(), 'andX'), $whereConditions);
+		  $qb->where($whereSql);
+		}
+		
+		return new Paginator($qb);
 	}
 	/**
 	 * Finds one photo by the given criteria

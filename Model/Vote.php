@@ -3,13 +3,17 @@
 namespace Ant\PhotoRestBundle\Model;
 
 use Ant\PhotoRestBundle\Model\VoteInterface;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
 
-
+/**
+ *@ExclusionPolicy("all")
+ */
 abstract class Vote implements VoteInterface {
 		
 	/**
 	 * Participant that created the vote
-	 *
+	 * @Expose
 	 * @var ParticipantInterface
 	 */
 	protected $participant;
@@ -21,8 +25,14 @@ abstract class Vote implements VoteInterface {
 	 */
 	protected $photo;
 	
+	/**
+	 *@Expose
+	 */
 	protected $publicatedAt;
 	
+	/**
+	 *@Expose
+	 */
 	protected $score;
 	
 	public function __construct()

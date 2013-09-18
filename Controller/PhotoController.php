@@ -19,6 +19,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Chatea\ApiBundle\Entity\User;
 
+use Pagerfanta\Exception\OutOfRangeCurrentPageException;
+
 /**
  * Foto controller.
  *
@@ -65,7 +67,7 @@ class PhotoController extends BaseRestController
 				$url = $this->getPhotoUploader()->upload($image);
 				$photo->setPath($url);
 				$photoManager->savePhoto($photo);
-				return $this->buildView($photo, 200);
+				return $this->buildResourceView($photo, 200);
 			}
 			return $this->buildFormErrorsView($form);
 		}		
@@ -94,7 +96,7 @@ class PhotoController extends BaseRestController
 		if (null === $photo) {
 			return $this->createError('Unable to find Photo entity', '42', '404');
 		}
-		return $this->buildView($photo, 200, 'vote_list');
+		return $this->buildResourceView($photo, 200, 'vote_list');
 		
 	}
 	/**
@@ -120,7 +122,7 @@ class PhotoController extends BaseRestController
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$entities = $photoManager->findAllMePhotos($participant);		
 		
-		return $this->buildView($entities, 200, 'photo_list');
+		return $this->buildPagedView($entities, $participant, 'ant_photo_rest_show_user_all', 200, 'photo_list');
 	}
 	/**
 	 * Delete a photo entity
@@ -234,8 +236,49 @@ class PhotoController extends BaseRestController
 	/**
 	 * @return Ant\PhotoRestBundle\Upload\PhotoUploader
 	 */
+	
 	protected function getPhotoUploader()
 	{
 		return $this->get('ant.photo_rest.upload.photo_uploader');
+	}
+	
+	private function buildPagedView($collection, $entity, $route, $statusCode, $contextGroup = null)
+	{
+		$resourceBuilder = $this->get('hateoas.resource_builder');
+		$paginator = $this->get('paginator');
+		$page = $this->getPage();
+	
+		try {
+			$collection = $paginator->paginate($collection, $page);
+			$resource = $resourceBuilder->createCollection($collection, 'Ant\PhotoBundle\Entity\Photo',
+									array(),
+									array(
+									  array(
+										'rel' => 'self', 
+										'definition' => array('route' => $route, 'parameters' => array('id'), 'rel' => 'self'), 
+										'data' => $entity
+										)
+									  ) 
+									);
+			
+			return $this->buildView($resource, $statusCode, $contextGroup);
+		}catch(OutOfRangeCurrentPageException $e){
+			return $this->customError404('page.not_found');
+		}catch(\Exception $ee){
+			ldd($ee);
+		}
+	}
+	
+	private function buildResourceView($entity, $statusCode, $contextGroup = null)
+	{
+		$resourceBuilder = $this->get('hateoas.resource_builder');
+		$resource = $resourceBuilder->create($entity);
+	
+		return $this->buildView($resource, $statusCode, $contextGroup);
+	}
+	
+	private function getPage()
+	{
+		return (int)$this->getRequest()->get('page', 1);
 	}
 }
