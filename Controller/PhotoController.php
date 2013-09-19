@@ -264,8 +264,6 @@ class PhotoController extends BaseRestController
 			return $this->buildView($resource, $statusCode, $contextGroup);
 		}catch(OutOfRangeCurrentPageException $e){
 			return $this->customError404('page.not_found');
-		}catch(\Exception $ee){
-			ldd($ee);
 		}
 	}
 	
