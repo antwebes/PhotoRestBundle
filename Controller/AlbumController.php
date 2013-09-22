@@ -88,4 +88,24 @@ class AlbumController extends BaseRestController
 			
 		return $this->buildView('Album deleted', 200);
 	}
+	/**
+	 * List the Albums of an user.
+	 * @ApiDoc(
+	 *  	description="List the Albums of an user.",
+	 *  	section="photo",
+	 *  	output="Chatea\ApiBundle\Entity\Album",
+	 *		statusCodes={
+	 *         200="Returned when successful",
+	 *         404="Unable to find User entity with code 32"
+	 *     }
+	 *  )
+	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"}, options={"id" = "user_id"})
+	 *
+	 */
+	public function listAction(User $user)
+	{
+		$albums = $this->get('ant.photo_rest.manager.album_manager')->findAllMeAlbums($user);
+		
+		return $this->buildView($albums, 200, 'photo_list');
+	}
 }

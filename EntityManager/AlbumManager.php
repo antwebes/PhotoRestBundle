@@ -4,7 +4,7 @@ namespace Ant\PhotoRestBundle\EntityManager;
 
 use Doctrine\ORM\EntityManager;
 use Ant\PhotoRestBundle\ModelManager\AlbumManager as BaseAlbumManager;
-
+use Ant\PhotoRestBundle\Model\ParticipantInterface;
 use Ant\PhotoRestBundle\Model\AlbumInterface;
 
 class AlbumManager extends BaseAlbumManager
@@ -77,6 +77,16 @@ class AlbumManager extends BaseAlbumManager
 	public function findAllAlbums()
 	{
 		return $this->repository->findAll();
+	}
+	/**
+	 * Finds albums by the given criteria
+	 *
+	 * @param array $criteria
+	 * @return array AlbumInterface
+	 */
+	public function findAlbumBy(array $criteria)
+	{
+		return $this->repository->findBy($criteria);
 	}
 	/**
 	 * Finds all albums of an user.

@@ -3,6 +3,7 @@
 namespace Ant\PhotoRestBundle\ModelManager;
 
 use Ant\PhotoRestBundle\Model\AlbumInterface;
+use Ant\PhotoRestBundle\Model\ParticipantInterface;
 /**
  * With this class you can create a entity Vote, without class final and independent of ORM
  * @author Chrysweel
@@ -41,5 +42,12 @@ abstract class AlbumManager
 	public function isOwner ($user, AlbumInterface $album)
 	{
 		return ($user->getId() == $album->getParticipant()->getId());
+	}
+	/**
+	 * get all albums of an user
+	 */
+	public function findAllMeAlbums(ParticipantInterface $participant)
+	{
+		return $this->findAlbumBy(array('participant' => $participant));
 	}
 }

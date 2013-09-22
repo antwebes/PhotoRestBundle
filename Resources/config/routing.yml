@@ -11,6 +11,10 @@ ant_photo_rest_delete_of_album:
     pattern: /{user_id}/photos/{photo_id}/albums
     defaults: { _controller: AntPhotoRestBundle:Photo:deleteOfAlbum }
     methods: [DELETE]
+ant_photo_rest_albums_user:
+    pattern: /{user_id}/albums
+    defaults: { _controller: AntPhotoRestBundle:Album:list }
+    methods: [GET]
     
 ant_photo_rest_vote_create:
     pattern: /{id}/vote
