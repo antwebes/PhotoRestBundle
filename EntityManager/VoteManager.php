@@ -3,6 +3,7 @@
 namespace Ant\PhotoRestBundle\EntityManager;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Ant\PhotoRestBundle\ModelManager\VoteManager as BaseVoteManager;
 use Ant\PhotoRestBundle\Model\VoteInterface;
 use Ant\PhotoRestBundle\Model\ParticipantInterface;
@@ -90,12 +91,13 @@ class VoteManager extends BaseVoteManager
 	 */
 	public function findAllVotesOfAnParticipant(ParticipantInterface $participant)
 	{
-		
-		return $this->repository->createQueryBuilder('v')
+		$query = $this->repository->createQueryBuilder('v')->select('v')
 			->where('v.participant = :participant' )
-			->setParameter('participant', $participant)
-			->getQuery()
-			->execute();
+			->setParameter('participant', $participant->getId())
+			->getQuery();
+		//ldd($query);
+			
+		return new Paginator($query, false);
 		
 	}
 	/**
