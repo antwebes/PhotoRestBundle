@@ -1,5 +1,5 @@
 ant_photo_rest_path:
-    pattern: /{path}
+    pattern: /uploads/{path}
     requirements:
         path: ".+(png)|(pnpg)|(jpg)|(jpeg)"
 

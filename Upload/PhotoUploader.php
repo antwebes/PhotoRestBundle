@@ -19,7 +19,7 @@ class PhotoUploader
     public function upload(UploadedFile $file)
     {
         // Check if the file's mime type is in the list of allowed mime types.
-        if (!in_array($file->getClientMimeType(), self::$allowedMimeTypes)) {
+        if (!in_array($file->getClientMimeType(), self::$allowedMimeTypes) && !$this->isImage($file)) {
             throw new \InvalidArgumentException(sprintf('Files of type %s are not allowed.', $file->getClientMimeType()));
         }
 
@@ -32,5 +32,13 @@ class PhotoUploader
         $adapter->write($filename, file_get_contents($file->getPathname()));
 
         return $filename;
+    }
+
+    private function isImage($file){
+        if($info = @getimagesize($file)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
