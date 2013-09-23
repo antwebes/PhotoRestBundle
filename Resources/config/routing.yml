@@ -20,7 +20,11 @@ ant_photo_rest_albums_user:
     pattern: /{user_id}/albums
     defaults: { _controller: AntPhotoRestBundle:Album:list }
     methods: [GET]
-    
+ant_photo_rest_album_user:
+    pattern: /{user_id}/albums/{album_id}
+    defaults: { _controller: AntPhotoRestBundle:Album:show }
+    methods: [GET]
+
 ant_photo_rest_vote_create:
     pattern: /{id}/vote
     defaults: { _controller: AntPhotoRestBundle:Vote:create }

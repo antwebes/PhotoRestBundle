@@ -88,6 +88,37 @@ class AlbumController extends BaseRestController
 			
 		return $this->buildView('Album deleted', 200);
 	}
+
+    /**
+     * Show an Album entity.
+     * @ApiDoc(
+     *  	description="Shows an album",
+     *  	section="photo",
+     *  	output="Chatea\ApiBundle\Entity\Album",
+     *		statusCodes={
+     *         200="Returned when successful",
+     *         403="Access denied",
+     *         404="Unable to find Channel entity with code 32"
+     *     }
+     *  )
+     *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
+     *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"}, options={"id" = "user_id"})
+     *
+     */
+    public function showAction(User $user, $album_id)
+    {
+        $album = $this->get('ant.photo_rest.manager.album_manager')->findAlbumById($album_id);
+
+        if (!$album) return $this->createError('Unable to find Album entity', '42', '404');
+
+        $securityContext = $this->container->get('security.context');
+        if (!($this->get('ant.photo_rest.manager.album_manager')->isOwner($user, $album))){
+            return $this->createError('Unable to find Photo entity', '32', '404');
+        }
+
+        return $this->buildResourceView($album, 200, 'photo_list');
+    }
+
 	/**
 	 * List the Albums of an user.
 	 * @ApiDoc(
@@ -106,6 +137,45 @@ class AlbumController extends BaseRestController
 	{
 		$albums = $this->get('ant.photo_rest.manager.album_manager')->findAllMeAlbums($user);
 		
-		return $this->buildView($albums, 200, 'photo_list');
+		return $this->buildPagedView($albums, $user, 'ant_photo_rest_albums_user', 200, 'photo_list');
 	}
+
+    private function buildPagedView($collection, $entity, $route, $statusCode, $contextGroup = null)
+    {
+        $resourceBuilder = $this->get('hateoas.resource_builder');
+        $paginator = $this->get('paginator');
+        $page = $this->getPage();
+
+        try {
+            $collection = $paginator->paginate($collection, $page);
+
+            $resource = $resourceBuilder->createCollection($collection, 'Ant\PhotoBundle\Entity\Album',
+                array(),
+                array(
+                    array(
+                        'rel' => 'self',
+                        'definition' => array('route' => $route, 'parameters' => array(array('user_id' => 'id')), 'rel' => 'self'),
+                        'data' => $entity
+                    )
+                )
+            );
+
+            return $this->buildView($resource, $statusCode, $contextGroup);
+        }catch(OutOfRangeCurrentPageException $e){
+            return $this->customError404('page.not_found');
+        }
+    }
+
+    private function buildResourceView($entity, $statusCode, $contextGroup = null)
+    {
+        $resourceBuilder = $this->get('hateoas.resource_builder');
+        $resource = $resourceBuilder->create($entity);
+
+        return $this->buildView($resource, $statusCode, $contextGroup);
+    }
+
+    private function getPage()
+    {
+        return (int)$this->getRequest()->get('page', 1);
+    }
 }

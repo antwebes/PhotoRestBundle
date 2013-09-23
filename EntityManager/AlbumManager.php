@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Ant\PhotoRestBundle\ModelManager\AlbumManager as BaseAlbumManager;
 use Ant\PhotoRestBundle\Model\ParticipantInterface;
 use Ant\PhotoRestBundle\Model\AlbumInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class AlbumManager extends BaseAlbumManager
 {
@@ -76,7 +77,10 @@ class AlbumManager extends BaseAlbumManager
 	 */
 	public function findAllAlbums()
 	{
-		return $this->repository->findAll();
+        $query = $this->repository->createQueryBuilder('a')
+            ->getQuery();
+
+        return new Paginator($query);
 	}
 	/**
 	 * Finds albums by the given criteria
@@ -86,7 +90,21 @@ class AlbumManager extends BaseAlbumManager
 	 */
 	public function findAlbumBy(array $criteria)
 	{
-		return $this->repository->findBy($criteria);
+        $qb = $this->repository->createQueryBuilder('a')->select('a');
+        $whereConditions = array();
+
+
+        foreach($criteria as $name => $value){
+            $whereConditions[] = $qb->expr()->eq('a.'.$name, ":".$name);
+            $qb->setParameter(":".$name, $value);
+        }
+
+        if(count($whereConditions) > 0){
+            $whereSql = call_user_func_array(array($qb->expr(), 'andX'), $whereConditions);
+            $qb->where($whereSql);
+        }
+
+        return new Paginator($qb);
 	}
 	/**
 	 * Finds all albums of an user.
@@ -95,11 +113,12 @@ class AlbumManager extends BaseAlbumManager
 	 */
 	public function findAllAlbumsOfAnParticipant(ParticipantInterface $participant)
 	{
-		return $this->repository->createQueryBuilder('a')
+		$query = $this->repository->createQueryBuilder('a')
 			->where('a.participant = :participant' )
 			->setParameter('participant', $participant)
-			->getQuery()
-			->execute();
+			->getQuery();
+
+        return new Paginator($query);
 	}
 	/**
 	 * Returns the fully qualified comment thread class name
