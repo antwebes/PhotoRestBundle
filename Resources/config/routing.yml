@@ -37,3 +37,7 @@ ant_photo_rest_vote_all_show:
     pattern: /{id}/vote
     defaults: { _controller: AntPhotoRestBundle:Vote:votes }
     methods: [GET]
+ant_photo_rest_vote_show:
+    pattern: /{id}/photos/{photo_id}/votes
+    defaults: { _controller: AntPhotoRestBundle:Vote:show }
+    methods: [GET]
