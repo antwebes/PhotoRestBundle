@@ -35,7 +35,7 @@ abstract class Album extends BaseAlbum
 	protected $description;
 	
 	/**
-	 * @ORM\OneToMany(targetEntity="Photo", mappedBy="album")
+	 * @ORM\OneToMany(targetEntity="Chatea\FotoBundle\Entity\Photo", mappedBy="album")
 	 */
 	protected $photos;
 	

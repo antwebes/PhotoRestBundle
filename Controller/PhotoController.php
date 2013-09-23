@@ -187,7 +187,6 @@ class PhotoController extends BaseRestController
 		$album = $this->get('ant.photo_rest.manager.album_manager')->findAlbumById($album_id);		
 		if (!$album) return $this->createError('Unable to find Album entity', '42', '404');
 		
-		ldd($album->getPhotos()->getValues());
 		$securityContext = $this->container->get('security.context');
 		
 		if ( !($photoManager->isOwner($user, $photo) or $this->get('ant.photo_rest.manager.album_manager')->isOwner($user, $album)
