@@ -15,7 +15,7 @@ use JMS\Serializer\SerializationContext;
  * BaseRest Controller.
  *
  */
-abstract class BaseRestController extends FOSRestController
+abstract class BaseRestController2 extends FOSRestController
 {
 	
     public function buildView($entity, $statusCode, $context = null)

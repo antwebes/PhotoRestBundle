@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Ant\PhotoRestBundle\Controller\BaseRestController;
+use Chatea\UtilBundle\Controller\BaseRestController;
 
 use JMS\SecurityExtraBundle\Annotation\SecureParam;
 
@@ -160,41 +160,21 @@ class VoteController extends BaseRestController
 	
 	private function buildPagedView($collection, $entity, $route, $statusCode, $contextGroup = null)
 	{
-		$resourceBuilder = $this->get('hateoas.resource_builder');
-		$paginator = $this->get('paginator');
-		$page = $this->getPage();
-	
-		try {
-			$collection = $paginator->paginate($collection, $page);$collection->getNbResults();
-			$resource = $resourceBuilder->createCollection($collection, 'Ant\PhotoBundle\Entity\Vote',
-									array(),
-									array(
-									  array(
-										'rel' => 'self', 
-										'definition' => array('route' => $route, 'parameters' => array('id'), 'rel' => 'self'), 
-										'data' => $entity
-										)
-									  ) 
-									);
-			
-			return $this->buildView($resource, $statusCode, $contextGroup);
-		}catch(OutOfRangeCurrentPageException $e){
-			return $this->customError404('page.not_found');
-		}catch(\Exception $ee){
-			ldd($ee);
-		}
-	}
-	
-	private function buildResourceView($entity, $statusCode, $contextGroup = null)
-	{
-		$resourceBuilder = $this->get('hateoas.resource_builder');
-		$resource = $resourceBuilder->create($entity);
-	
-		return $this->buildView($resource, $statusCode, $contextGroup);
-	}
-	
-	private function getPage()
-	{
-		return (int)$this->getRequest()->get('page', 1);
+		$overrides = array(
+								array(
+									'rel' => 'self', 
+									'definition' => array('route' => $route, 'parameters' => array('id'), 'rel' => 'self'), 
+									'data' => $entity
+								)
+							);
+
+		return $this->buildPagedResourcesView(
+            $collection, 
+            'Ant\PhotoBundle\Entity\Vote', 
+            $statusCode, 
+            $contextGroup, 
+            array(), 
+            $overrides
+            );
 	}
 }
