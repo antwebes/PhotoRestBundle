@@ -16,6 +16,8 @@ use Chatea\FotoBundle\Entity\Album;
 
 use Chatea\UtilBundle\Controller\BaseRestController;
 
+use FOS\RestBundle\Controller\Annotations\QueryParam;
+
 /**
  * Album controller.
  *
@@ -131,6 +133,8 @@ class AlbumController extends BaseRestController
 	 *         404="Unable to find User entity with code 32"
 	 *     }
 	 *  )
+     * @QueryParam(name="limit", description="Max number of channels to be returned")
+     * @QueryParam(name="offset", description="Number of records to skip")
 	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"}, options={"id" = "user_id"})
 	 *
 	 */

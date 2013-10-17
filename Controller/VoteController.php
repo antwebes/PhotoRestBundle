@@ -14,6 +14,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Chatea\ApiBundle\Entity\User;
 
+use FOS\RestBundle\Controller\Annotations\QueryParam;
+
 /**
  * Vote controller.
  */
@@ -102,6 +104,8 @@ class VoteController extends BaseRestController
 	 *         200="Returned when successful",
 	 *     }
 	 *  )
+	 * @QueryParam(name="limit", description="Max number of channels to be returned")
+     * @QueryParam(name="offset", description="Number of records to skip")
 	 */
 	public function votesAction($id)
 	{

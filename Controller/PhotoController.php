@@ -21,6 +21,8 @@ use Chatea\ApiBundle\Entity\User;
 
 use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 
+use FOS\RestBundle\Controller\Annotations\QueryParam;
+
 /**
  * Foto controller.
  *
@@ -109,6 +111,8 @@ class PhotoController extends BaseRestController
 	 *         200="Returned when successful"
 	 *     }
 	 *  )
+	 * @QueryParam(name="limit", description="Max number of channels to be returned")
+     * @QueryParam(name="offset", description="Number of records to skip")
 	 */
 	public function photosUserAction($id)
 	{
