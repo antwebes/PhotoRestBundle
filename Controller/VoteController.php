@@ -50,9 +50,11 @@ class VoteController extends BaseRestController
     	
 		$voteManager = $this->get('ant.photo_rest.manager.vote_manager');
 		$existVote = $voteManager->findVoteByPhotoAndParticipant($photoId, $user->getId());
+		//code error incorrect TODO
+		if ($voteManager->isMePhoto($photo, $user)) return $this->serviceError('photo_rest.non_vote_own_photo', '409');;
 		
 		if ($existVote){
-			return $this->createError('You have already voted this photo ', '46', '409');
+			return $this->serviceError('photo_rest.already_vote_photo', '409');
 		}
 
 		$vote = $voteManager->createVote();

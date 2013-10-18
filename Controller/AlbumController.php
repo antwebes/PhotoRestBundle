@@ -11,13 +11,13 @@ use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
-use Chatea\ApiBundle\Entity\User;
+// use Chatea\ApiBundle\Entity\User;
 use Chatea\FotoBundle\Entity\Album;
 
 use Chatea\UtilBundle\Controller\BaseRestController;
 
 use FOS\RestBundle\Controller\Annotations\QueryParam;
-
+use Ant\PhotoRestBundle\Model\ParticipantInterface;
 /**
  * Album controller.
  *
@@ -39,7 +39,7 @@ class AlbumController extends BaseRestController
 	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
 	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"})
 	 */
-	public function createAction(User $user, Request $request)
+	public function createAction(ParticipantInterface $user, Request $request)
 	{
 		$albumManager = $this->get('ant.photo_rest.manager.album_manager');
 		$album = $albumManager->createAlbum();
@@ -76,7 +76,7 @@ class AlbumController extends BaseRestController
 	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"}, options={"id" = "user_id"})
 	 * 
 	 */
-	public function deleteAction(User $user, $album_id)
+	public function deleteAction(ParticipantInterface $user, $album_id)
 	{
 		$album = $this->get('ant.photo_rest.manager.album_manager')->findAlbumById($album_id);
 		
@@ -108,7 +108,7 @@ class AlbumController extends BaseRestController
      *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"}, options={"id" = "user_id"})
      *
      */
-    public function showAction(User $user, $album_id)
+    public function showAction(ParticipantInterface $user, $album_id)
     {
         $album = $this->get('ant.photo_rest.manager.album_manager')->findAlbumById($album_id);
 
@@ -138,7 +138,7 @@ class AlbumController extends BaseRestController
 	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"}, options={"id" = "user_id"})
 	 *
 	 */
-	public function listAction(User $user)
+	public function listAction(ParticipantInterface $user)
 	{
 		$albums = $this->get('ant.photo_rest.manager.album_manager')->findAllMeAlbums($user);
 		
