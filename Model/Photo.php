@@ -32,13 +32,6 @@ abstract class Photo implements PhotoInterface {
 	protected $votes;
 	
 	/**
-	 * @ORM\Column(type="datetime", nullable=true)
-	 *
-	 * @Assert\DateTime
-	 */
-	protected $updatedAt;
-	
-	/**
 	 * @ORM\Column(type="datetime")
 	 *
 	 * @Assert\Date

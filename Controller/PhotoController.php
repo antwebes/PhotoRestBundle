@@ -90,7 +90,7 @@ class PhotoController extends BaseRestController
 	 *     }
 	 *  )
 	 */
-	public function getShowAction($id)
+	public function showAction($id)
 	{
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$photo = $photoManager->findPhotoById($id);
@@ -98,11 +98,11 @@ class PhotoController extends BaseRestController
 		if (null === $photo) {
 			return $this->createError('Unable to find Photo entity', '42', '404');
 		}
-		return $this->buildResourceView($photo, 200, 'vote_list');
+		return $this->buildResourceView($photo, 200, 'photo_show');
 		
 	}
 	/**
-	 * List all Photo entities of an user.
+	 * List all Photo entities of an user
 	 * @ApiDoc(
 	 *  	description="List all photos of an user",
 	 *  	section="photo",
@@ -126,7 +126,33 @@ class PhotoController extends BaseRestController
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$entities = $photoManager->findAllMePhotos($participant);		
 		
-		return $this->buildPagedView($entities, $participant, 'ant_photo_rest_show_user_all', 200, 'photo_list');
+		return $this->buildPagedView($entities, $participant, 'ant_photo_rest_show_user_all', array('id'=>'id'), 200, 'photo_list');
+	}
+	/**
+	 * List all Photo entities of an album
+	 * @ApiDoc(
+	 *  	description="List all Photo entities of an album",
+	 *  	section="photo",
+	 *  	output="Ant\PhotoRestBundle\Model\Photo",
+	 *		statusCodes={
+	 *         200="Returned when successful"
+	 *     }
+	 *  )
+	 * @QueryParam(name="limit", description="Max number of records to be returned")
+	 * @QueryParam(name="offset", description="Number of records to skip")
+	 */
+	public function photosAlbumAction($album_id)
+	{		
+		$album = $this->get('ant.photo_rest.manager.album_manager')->findAlbumById($album_id);
+		if (!$album) return $this->createError('Unable to find Album entity', '42', '404');
+		
+		$entities = $album->getPhotos();
+		$parameters = array(
+				'user_id' => 'participant.id',
+				'album_id' => 'id'
+				);
+		
+		return $this->buildPagedView($entities, $album, 'ant_photo_rest_album_user', $parameters, 200, 'photo_show');
 	}
 	/**
 	 * Delete a photo entity
@@ -245,23 +271,38 @@ class PhotoController extends BaseRestController
 		return $this->get('ant.photo_rest.upload.photo_uploader');
 	}
 	
-	private function buildPagedView($collection, $entity, $route, $statusCode, $contextGroup = null)
+	/**
+	 * only show a collection
+	 * @param unknown $collection collection of elements to show
+	 * @param unknown $entity entity base
+	 * @param string $route route base of list
+	 * @param int $statusCode code http 
+	 * @param string $contextGroup
+	 */	
+	private function buildPagedView($collection, $entity, $route, $arrayParameters, $statusCode, $contextGroup = null)
 	{
+		$joker = array();
+		$parameters = array();
+		foreach ($arrayParameters as $key => $value){
+				$joker[$key] = $value;
+				array_push($parameters, $joker);
+				$joker = array();
+		}
 		$overrides = array(
-			                array(
-							    'rel' => 'self', 
-							    'definition' => array('route' => $route, 'parameters' => array('id'), 'rel' => 'self'), 
-								'data' => $entity
-						    )
-					      );
-
+				array(
+						'rel' => 'self',
+						'definition' => array('route' => $route, 'parameters' => $parameters, 'rel' => 'self'),
+						'data' => $entity
+				)
+		);
+	
 		return $this->buildPagedResourcesView(
-            $collection, 
-            'Ant\PhotoBundle\Entity\Photo', 
-            $statusCode, 
-            $contextGroup, 
-            array(), 
-            $overrides
-            );
+				$collection,
+				'Ant\PhotoBundle\Entity\Album',
+				$statusCode,
+				$contextGroup,
+				array(),
+				$overrides
+		);
 	}
 }
