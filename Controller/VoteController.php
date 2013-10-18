@@ -12,7 +12,7 @@ use JMS\SecurityExtraBundle\Annotation\SecureParam;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
-use Chatea\ApiBundle\Entity\User;
+use Ant\PhotoRestBundle\Model\ParticipantInterface;
 
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 
@@ -36,7 +36,7 @@ class VoteController extends BaseRestController
 	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
 	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"})
 	 */
-	public function createAction(User $user, Request $request)
+	public function createAction(ParticipantInterface $user, Request $request)
 	{
 		$dataRequest = $request->request->get('vote');
 		//get id of photo from request
@@ -87,7 +87,7 @@ class VoteController extends BaseRestController
 	 * @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"})
 	 * @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN")
 	 */
-	public function showAction(User $user, $photo_id)
+	public function showAction(ParticipantInterface $user, $photo_id)
 	{
 		$result = $this->getPhotoAndVote($photo_id, $user);
 		
@@ -133,7 +133,7 @@ class VoteController extends BaseRestController
 	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
 	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"})
 	 */
-	public function deleteAction(User $user, $photo_id)
+	public function deleteAction(ParticipantInterface $user, $photo_id)
 	{
 		$result = $this->getPhotoAndVote($photo_id);
 		
@@ -144,7 +144,7 @@ class VoteController extends BaseRestController
 		else return $result;		
 	}
 	
-	private function getPhotoAndVote($photoId, User $user)
+	private function getPhotoAndVote($photoId, ParticipantInterface $user)
 	{
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$photo = $photoManager->findPhotoById($photoId);

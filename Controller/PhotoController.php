@@ -17,7 +17,7 @@ use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
-use Chatea\ApiBundle\Entity\User;
+use Ant\PhotoRestBundle\Model\ParticipantInterface;
 
 use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 
@@ -44,7 +44,7 @@ class PhotoController extends BaseRestController
 	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
 	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"})
 	 */
-	public function createAction(User $user, Request $request)
+	public function createAction(ParticipantInterface $user, Request $request)
 	{
 		$dataRequest = $request->request->all();
 		
@@ -181,7 +181,7 @@ class PhotoController extends BaseRestController
 	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
 	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find", "id" = "user_id"})
 	 */
-	public function insertToAlbumAction(User $user, $photo_id, $album_id)
+	public function insertToAlbumAction(ParticipantInterface $user, $photo_id, $album_id)
 	{
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		
@@ -216,7 +216,7 @@ class PhotoController extends BaseRestController
 	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
 	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find", "id" = "user_id"})
 	 */
-	public function deleteOfAlbumAction(User $user, $photo_id)
+	public function deleteOfAlbumAction(ParticipantInterface $user, $photo_id)
 	{
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 	
