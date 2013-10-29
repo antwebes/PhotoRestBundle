@@ -65,7 +65,7 @@ class PhotoController extends BaseRestController
 				$photo->setParticipant($user);
 				if ($request->files->get('image')) $image = $request->files->get('image');
 				else $image = $form->getData()->getImage();
-				
+				if (!isset($image)) return $this->serviceError('invalid_request', '404');
 				$url = $this->getPhotoUploader()->upload($image);
 				$photo->setPath($url);
 				$photoManager->savePhoto($photo);
