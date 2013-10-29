@@ -98,7 +98,7 @@ class PhotoController extends BaseRestController
 		if (null === $photo) {
 			return $this->createError('Unable to find Photo entity', '42', '404');
 		}
-		return $this->buildResourceView($photo, 200, 'photo_show');
+		return $this->buildResourceView($photo, 200, 'photo_list');
 		
 	}
 	/**
@@ -124,9 +124,10 @@ class PhotoController extends BaseRestController
 		}
 	
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
-		$entities = $photoManager->findAllMePhotos($participant);		
+		$entities = $photoManager->findAllMePhotos($participant);
 		
-		return $this->buildPagedView($entities, $participant, 'ant_photo_rest_show_user_all', array('id'=>'id'), 200, 'photo_list');
+		$linkOverrides = array('route' => 'ant_photo_rest_show_user_all', 'parameters' => array('id'), 'rel' => 'self', 'entity' => $participant);
+		return $this->buildPagedResourcesView($entities, 'Ant\PhotoBundle\Entity\Photo' , 200, 'photo_list', array('id'=>'id'),$linkOverrides);
 	}
 	/**
 	 * List all Photo entities of an album
@@ -148,13 +149,12 @@ class PhotoController extends BaseRestController
 		
 		$entities = $album->getPhotos();
 		$parameters = array(
-				    array('user_id' => 'participant.id'),
 					array('album_id' => 'id')
 				);
 		
-		$linkOverrides = array('route' => 'ant_photo_rest_album_user', 'parameters' => $parameters, 'rel' => 'self', 'entity' => $album);
+		$linkOverrides = array('route' => 'ant_photo_rest_photos_album', 'parameters' => $parameters, 'rel' => 'self', 'entity' => $album);
 		
-		return $this->buildPagedResourcesView($entities, 'Ant\PhotoBundle\Entity\Album', 200, 'photo_show', array(), $linkOverrides);
+		return $this->buildPagedResourcesView($entities, 'Ant\PhotoBundle\Entity\Album', 200, 'photo_list', array(), $linkOverrides);
 	}
 	/**
 	 * Delete a photo entity

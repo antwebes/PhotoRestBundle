@@ -68,14 +68,14 @@ class VoteController extends BaseRestController
 						
 			$vote->setParticipant($user);
 			$voteManager->saveVote($vote, $photo);
-			return $this->buildResourceView($vote, 200);
+			return $this->buildResourceView($vote, 200, "vote_list");
 		}
 		return $this->buildFormErrorsView($form);
 	}
 	/**
-	 * Show my vote of a photo of the user logged
+	 * Show my vote of a photo of the user
 	 * @ApiDoc(
-	 *  	description="show the vote of a photo of the user logged",
+	 *  	description="show my vote of a photo of the user",
 	 *  	section="photo",
 	 *  	input="photo_id",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
@@ -136,7 +136,7 @@ class VoteController extends BaseRestController
 	 */
 	public function deleteAction(ParticipantInterface $user, $photo_id)
 	{
-		$result = $this->getPhotoAndVote($photo_id);
+		$result = $this->getPhotoAndVote($photo_id, $user);
 		
 		if (is_array($result)){
 			$this->get('ant.photo_rest.manager.vote_manager')->deleteVote($result['vote'], $result['photo']);
