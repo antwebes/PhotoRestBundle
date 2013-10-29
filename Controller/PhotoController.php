@@ -66,7 +66,7 @@ class PhotoController extends BaseRestController
 				$url = $this->getPhotoUploader()->upload($image);
 				$photo->setPath($url);
 				$photoManager->savePhoto($photo);
-				return $this->buildResourceView($photo, 200);
+				return $this->buildResourceView($photo, 200, 'photo_list');
 			}
 			return $this->buildFormErrorsView($form);
 		}		
