@@ -1,8 +1,3 @@
-ant_photo_rest_path:
-    pattern: /uploads/{path}
-    requirements:
-        path: ".+(png)|(pnpg)|(jpg)|(jpeg)"
-
 ant_photo_rest_create:
     pattern: /{id}/photo
     defaults: { _controller: AntPhotoRestBundle:Photo:create }
