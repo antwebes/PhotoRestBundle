@@ -113,9 +113,10 @@ class VoteController extends BaseRestController
 	{
 		$participantManager = $this->get('ant.photo_rest.manager.participant_manager');
 		$currentUser = $participantManager->findParticipantById($id);
-		
 		$votes = $this->get('ant.photo_rest.manager.vote_manager')->findAllVotesOfAnParticipant($currentUser);
-		return $this->buildPagedView($votes, $currentUser, 'ant_photo_rest_vote_all_show', 200, 'vote_list');
+		$linkOverrides = array('route' => 'ant_photo_rest_vote_all_show', 'parameters' => array('id'), 'rel' => 'self', 'entity' => $currentUser);
+
+		return $this->buildPagedResourcesView($votes, 'Ant\PhotoBundle\Entity\Vote', 200, 'vote_list', array(), $linkOverrides);
 	}
 	/**
 	 * Delete a new vote entity
@@ -162,25 +163,5 @@ class VoteController extends BaseRestController
 		
 		return array('vote' => $vote,
 					'photo' => $photo);
-	}
-	
-	private function buildPagedView($collection, $entity, $route, $statusCode, $contextGroup = null)
-	{
-		$overrides = array(
-								array(
-									'rel' => 'self', 
-									'definition' => array('route' => $route, 'parameters' => array('id'), 'rel' => 'self'), 
-									'data' => $entity
-								)
-							);
-
-		return $this->buildPagedResourcesView(
-            $collection, 
-            'Ant\PhotoBundle\Entity\Vote', 
-            $statusCode, 
-            $contextGroup, 
-            array(), 
-            $overrides
-            );
 	}
 }

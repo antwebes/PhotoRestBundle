@@ -148,11 +148,13 @@ class PhotoController extends BaseRestController
 		
 		$entities = $album->getPhotos();
 		$parameters = array(
-				'user_id' => 'participant.id',
-				'album_id' => 'id'
+				    array('user_id' => 'participant.id'),
+					array('album_id' => 'id')
 				);
 		
-		return $this->buildPagedView($entities, $album, 'ant_photo_rest_album_user', $parameters, 200, 'photo_show');
+		$linkOverrides = array('route' => 'ant_photo_rest_album_user', 'parameters' => $parameters, 'rel' => 'self', 'entity' => $album);
+		
+		return $this->buildPagedResourcesView($entities, 'Ant\PhotoBundle\Entity\Album', 200, 'photo_show', array(), $linkOverrides);
 	}
 	/**
 	 * Delete a photo entity
@@ -269,40 +271,5 @@ class PhotoController extends BaseRestController
 	protected function getPhotoUploader()
 	{
 		return $this->get('ant.photo_rest.upload.photo_uploader');
-	}
-	
-	/**
-	 * only show a collection
-	 * @param unknown $collection collection of elements to show
-	 * @param unknown $entity entity base
-	 * @param string $route route base of list
-	 * @param int $statusCode code http 
-	 * @param string $contextGroup
-	 */	
-	private function buildPagedView($collection, $entity, $route, $arrayParameters, $statusCode, $contextGroup = null)
-	{
-		$joker = array();
-		$parameters = array();
-		foreach ($arrayParameters as $key => $value){
-				$joker[$key] = $value;
-				array_push($parameters, $joker);
-				$joker = array();
-		}
-		$overrides = array(
-				array(
-						'rel' => 'self',
-						'definition' => array('route' => $route, 'parameters' => $parameters, 'rel' => 'self'),
-						'data' => $entity
-				)
-		);
-	
-		return $this->buildPagedResourcesView(
-				$collection,
-				'Ant\PhotoBundle\Entity\Album',
-				$statusCode,
-				$contextGroup,
-				array(),
-				$overrides
-		);
 	}
 }

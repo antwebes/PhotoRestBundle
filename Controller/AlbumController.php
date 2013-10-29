@@ -141,27 +141,8 @@ class AlbumController extends BaseRestController
 	public function listAction(ParticipantInterface $user)
 	{
 		$albums = $this->get('ant.photo_rest.manager.album_manager')->findAllMeAlbums($user);
+        $linkOverrides = array('route' => 'ant_photo_rest_albums_user', 'parameters' => array(array('user_id' => 'id')), 'rel' => 'self', 'entity' => $user);
 		
-		return $this->buildPagedView($albums, $user, 'ant_photo_rest_albums_user', 200, 'photo_list');
+		return $this->buildPagedResourcesView($albums, 'Ant\PhotoBundle\Entity\Album', 200, 'photo_list', array(), $linkOverrides);
 	}
-
-    private function buildPagedView($collection, $entity, $route, $statusCode, $contextGroup = null)
-    {
-        $overrides = array(
-                    array(
-                        'rel' => 'self',
-                        'definition' => array('route' => $route, 'parameters' => array(array('user_id' => 'id')), 'rel' => 'self'),
-                        'data' => $entity
-                    )
-                );
-
-        return $this->buildPagedResourcesView(
-            $collection, 
-            'Ant\PhotoBundle\Entity\Album', 
-            $statusCode, 
-            $contextGroup, 
-            array(), 
-            $overrides
-            );
-    }
 }
