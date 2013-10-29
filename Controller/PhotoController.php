@@ -59,13 +59,10 @@ class PhotoController extends BaseRestController
 			$form->bind($dataRequest);
 			
 			if ($form->isValid()) {
-				
-// 				$currentUser = $this->get('ant.photo_rest.manager.participant_manager')->findParticipantById($id);
-// 				$currentUser = $this->get('security.context')->getToken()->getUser();
 				$photo->setParticipant($user);
 				if ($request->files->get('image')) $image = $request->files->get('image');
 				else $image = $form->getData()->getImage();
-				if (!isset($image)) return $this->serviceError('invalid_request', '404');
+				if (!isset($image)) return $this->serviceError('photo_rest.file.not_found', '404');
 				$url = $this->getPhotoUploader()->upload($image);
 				$photo->setPath($url);
 				$photoManager->savePhoto($photo);
