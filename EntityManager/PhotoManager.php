@@ -38,7 +38,7 @@ class PhotoManager extends BasePhotoManager
 		$this->repository = $em->getRepository($class);
 	
 		$metadata = $em->getClassMetadata($class);
-		$this->class = $metadata->name;
+		$this->class = $metadata->getName();
 	}
 	
 	/**

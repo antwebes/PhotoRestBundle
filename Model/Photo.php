@@ -109,6 +109,11 @@ abstract class Photo implements PhotoInterface {
 	public function setPath($path) {
 		$this->path = $path;
 	}
+	
+	public function getPublicatedAt() {
+		return $this->publicatedAt;
+	}
+	
 	public function getScore() {
 		return $this->score;
 	}
