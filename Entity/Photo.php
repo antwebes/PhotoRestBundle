@@ -29,7 +29,7 @@ abstract class Photo extends BasePhoto
 	
 	public function __toString()
 	{
-		return $this->getTitle();
+		return $this->getPath();
 	}
  
 	
