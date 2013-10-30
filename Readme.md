@@ -1,6 +1,10 @@
 FotoRestBundle
 ==============
 
+Documentation:
+
+Doc about bundle: https://github.com/antwebes/PhotoRestBundle/tree/master/doc/index.md
+
 bundle to manage photo with rest
 
 Codes:
