@@ -12,7 +12,7 @@ use Ant\PhotoRestBundle\Model\AlbumInterface;
  *
  */
 
-abstract class PhotoManager
+abstract class PhotoManager implements PhotoManagerInterface
 {
 	public function savePhoto(PhotoInterface $photo)
 	{

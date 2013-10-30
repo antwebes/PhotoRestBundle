@@ -220,6 +220,11 @@ class PhotoController extends BaseRestController
 		$photo = $photoManager->findPhotoById($photo_id);		
 		if (!$photo) return $this->createError('Unable to find Photo entity', '42', '404');
 		
+		$securityContext = $this->container->get('security.context');
+		if (!($this->get('ant.photo_rest.entity_manager.photo_manager')->isOwner($user, $photo) or $securityContext->isGranted(array(new Expression('hasRole("ROLE_ADMIN") or hasRole("ROLE_APPLICATION")'))))){
+			return $this->createError('This user has no permission for this action', '32', '403');
+		}
+		
 		$album = $this->get('ant.photo_rest.manager.album_manager')->findAlbumById($album_id);		
 		if (!$album) return $this->createError('Unable to find Album entity', '42', '404');
 		
@@ -254,13 +259,15 @@ class PhotoController extends BaseRestController
 	
 		$photo = $photoManager->findPhotoById($photo_id);
 		if (!$photo) return $this->createError('Unable to find Photo entity', '42', '404');
-	
+		
 		$securityContext = $this->container->get('security.context');
 		
 		if ( !($photoManager->isOwner($user, $photo)
 				or $securityContext->isGranted(array(new Expression('hasRole("ROLE_ADMIN") or hasRole("ROLE_APPLICATION")')))
 		)) return $this->createError('This user has no permission for this action', '32', '403');
-		
+		if (!($photo->hasAlbum())){
+			return $this->serviceError('photo_rest.album.entity.unable_find', '404');
+		}
 		$album = $photo->getAlbum();
 			
 		$photoManager->deleteOfAlbum($photo, $album);

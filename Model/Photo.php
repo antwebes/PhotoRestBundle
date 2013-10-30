@@ -133,4 +133,9 @@ abstract class Photo implements PhotoInterface {
 	{
 		return $this->album;
 	}
+	
+	public function hasAlbum()
+	{
+		return !($this->album == null);
+	}
 }

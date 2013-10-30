@@ -135,14 +135,14 @@ class AlbumController extends BaseRestController
 	 *  )
      * @QueryParam(name="limit", description="Max number of records to be returned")
      * @QueryParam(name="offset", description="Number of records to skip")
-	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"}, options={"id" = "user_id"})
+	 * @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"})
 	 *
 	 */
 	public function listAction(ParticipantInterface $user)
 	{
 		$albums = $this->get('ant.photo_rest.manager.album_manager')->findAllMeAlbums($user);
 		
-        $linkOverrides = array('route' => 'ant_photo_rest_albums_user', 'parameters' => array(array('user_id' => 'id')), 'rel' => 'self', 'entity' => $user);
+        $linkOverrides = array('route' => 'ant_photo_rest_albums_user', 'parameters' => array('id' => 'id'), 'rel' => 'self', 'entity' => $user);
 		
 		return $this->buildPagedResourcesView($albums, 'Ant\PhotoBundle\Entity\Album', 200, 'photo_list', array(), $linkOverrides);
 	}

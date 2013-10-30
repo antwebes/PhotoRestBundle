@@ -12,7 +12,7 @@ ant_photo_rest_delete_of_album:
     defaults: { _controller: AntPhotoRestBundle:Photo:deleteOfAlbum }
     methods: [DELETE]
 ant_photo_rest_albums_user:
-    pattern: /{user_id}/albums
+    pattern: /{id}/albums
     defaults: { _controller: AntPhotoRestBundle:Album:list }
     methods: [GET]
 ant_photo_rest_album_user:
