@@ -25,11 +25,11 @@ ant_photo_rest_vote_create:
     defaults: { _controller: AntPhotoRestBundle:Vote:create }
     methods: [POST]
 ant_photo_rest_vote_delete:
-    pattern: /{id}/vote/{photo_id}
+    pattern: /{id}/votes/{photo_id}
     defaults: { _controller: AntPhotoRestBundle:Vote:delete }
     methods: [DELETE]
 ant_photo_rest_vote_all_show:
-    pattern: /{id}/vote
+    pattern: /{id}/votes
     defaults: { _controller: AntPhotoRestBundle:Vote:votes }
     methods: [GET]
 ant_photo_rest_vote_show:
