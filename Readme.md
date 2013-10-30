@@ -3,7 +3,7 @@ FotoRestBundle
 
 Documentation:
 
-Doc about bundle: https://github.com/antwebes/PhotoRestBundle/tree/master/doc/index.md
+Doc about bundle: https://github.com/antwebes/PhotoRestBundle/blob/master/Doc/index.md
 
 bundle to manage photo with rest
 
