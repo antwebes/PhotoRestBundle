@@ -25,6 +25,19 @@ class Configuration implements ConfigurationInterface
         		->scalarNode('photo_class')->isRequired()->cannotBeEmpty()->end()
         		->scalarNode('album_class')->isRequired()->cannotBeEmpty()->end()
         		->scalarNode('vote_class')->isRequired()->cannotBeEmpty()->end()
+                ->arrayNode('upload')
+                    ->children()
+                        ->arrayNode('thumbnails')
+                            ->isRequired()
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('width')->defaultValue(false)->end()
+                                    ->scalarNode('height')->defaultValue(false)->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
         	;
 
         // Here you should define the parameters that are allowed to

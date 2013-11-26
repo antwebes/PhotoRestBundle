@@ -4,16 +4,23 @@ namespace Ant\PhotoRestBundle\Upload;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Gaufrette\Filesystem;
+use Ant\ImageResizeBundle\Image\Resizer;
 
 class PhotoUploader
 {
     private static $allowedMimeTypes = array('image/jpeg', 'image/png', 'image/gif', 'application/octet-stream');
 
     private $filesystem;
+    private $resizer;
+    private $baseDirectory;
+    private $thumnailsSizes;
 
-    public function __construct(Filesystem $filesystem)
+    public function __construct(Filesystem $filesystem, $baseDirectory, Resizer $resizer, $thumnailsSizes)
     {
         $this->filesystem = $filesystem;
+        $this->baseDirectory = $baseDirectory;
+        $this->resizer = $resizer;
+        $this->thumnailsSizes = $thumnailsSizes;
     }
 
     public function upload(UploadedFile $file)
@@ -31,7 +38,23 @@ class PhotoUploader
 //         $adapter->setMetadata($filename, array('contentType' => $file->getClientMimeType()));
         $adapter->write($filename, file_get_contents($file->getPathname()));
 
+        $this->generateThumbs($this->baseDirectory."/".$filename, $file->getClientOriginalExtension());
+
         return $filename;
+    }
+
+    private function generateThumbs($originalImageFile, $extension)
+    {
+        $baseName = substr($originalImageFile, 0, strlen($originalImageFile) - strlen($extension) - 1);
+
+        foreach ($this->thumnailsSizes as $thumbnailName => $size) {
+            $width = $size['width'];
+            $height = $size['height'];
+            $thumbFilename = sprintf("%s_%s.%s", $baseName, $thumbnailName, $extension);
+            $image = $this->resizer->resize($originalImageFile, $width, $height, 'proportional');
+            
+            $image->save($thumbFilename);
+        }
     }
 
     private function isImage($file){

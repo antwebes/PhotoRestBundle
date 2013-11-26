@@ -4,4 +4,4 @@ parameters:
 services:
     ant.photo_rest.upload.photo_uploader:
         class: %ant.photo_rest.upload.photo_uploader%
-        arguments: [@image_adapter_fs]
+        arguments: [@image_adapter_fs, %kernel.root_dir%/../web/uploads, @ant.image_resizer.resizer, %ant.photo_rest.upload.thumbnails%]

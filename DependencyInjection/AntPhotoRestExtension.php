@@ -40,6 +40,7 @@ class AntPhotoRestExtension extends Extension
         $container->setParameter('ant.photo_rest.model.photo.class', $config['photo_class']);
         $container->setParameter('ant.photo_rest.model.album.class', $config['album_class']);
         $container->setParameter('ant.photo_rest.model.vote.class', $config['vote_class']);
+        $container->setParameter('ant.photo_rest.upload.thumbnails', $config['upload']['thumbnails']);
 
 //         $container->setParameter('ant_badge.badge_class', $config['badge_class']);
 //         $container->setParameter('ant_badge.rank_class', $config['rank_class']);
