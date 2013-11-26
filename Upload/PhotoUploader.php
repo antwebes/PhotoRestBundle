@@ -12,13 +12,11 @@ class PhotoUploader
 
     private $filesystem;
     private $resizer;
-    private $baseDirectory;
     private $thumnailsSizes;
 
-    public function __construct(Filesystem $filesystem, $baseDirectory, Resizer $resizer, $thumnailsSizes)
+    public function __construct(Filesystem $filesystem, Resizer $resizer, $thumnailsSizes)
     {
         $this->filesystem = $filesystem;
-        $this->baseDirectory = $baseDirectory;
         $this->resizer = $resizer;
         $this->thumnailsSizes = $thumnailsSizes;
     }
@@ -38,23 +36,27 @@ class PhotoUploader
 //         $adapter->setMetadata($filename, array('contentType' => $file->getClientMimeType()));
         $adapter->write($filename, file_get_contents($file->getPathname()));
 
-        $this->generateThumbs($this->baseDirectory."/".$filename, $file->getClientOriginalExtension());
+        $this->generateThumbs($filename, $file->getClientOriginalExtension());
 
         return $filename;
     }
 
     private function generateThumbs($originalImageFile, $extension)
     {
-        $baseName = substr($originalImageFile, 0, strlen($originalImageFile) - strlen($extension) - 1);
+        $baseName = substr($originalImageFile, 0, -(strlen($extension) + 1));
 
         foreach ($this->thumnailsSizes as $thumbnailName => $size) {
             $width = $size['width'];
             $height = $size['height'];
             $thumbFilename = sprintf("%s_%s.%s", $baseName, $thumbnailName, $extension);
             $image = $this->resizer->resize($originalImageFile, $width, $height, 'proportional');
+            $content = $image->get($extension);
+            $file = $this->filesystem->createFile($thumbFilename);
             
-            $image->save($thumbFilename);
+            $file->setContent($content);
         }
+
+        $this->filesystem->delete($originalImageFile);
     }
 
     private function isImage($file){
