@@ -1,6 +1,9 @@
 parameters:
     ant.photo_rest.entity_manager.photo_manager.class: Ant\PhotoRestBundle\EntityManager\PhotoManager
+    ant.photo_rest.entity_manager.album_manager.class: Ant\PhotoRestBundle\EntityManager\AlbumManager
     ant.photo_rest.entity_manager.vote_manager.class: Ant\PhotoRestBundle\EntityManager\VoteManager
+    ant.photo_rest.entity_manager.participant_manager.class: Ant\PhotoRestBundle\EntityManager\ParticipantManager
+    #ant.photo_rest.model.participant_interface.class: Chatea\ApiBundle\Entity\User
     
 services:
     ant.photo_rest.entity_manager.photo_manager:
@@ -9,3 +12,9 @@ services:
     ant.photo_rest.manager.vote_manager:
         class: %ant.photo_rest.entity_manager.vote_manager.class%
         arguments: [@ant.photo_rest.entity_manager.photo_manager, @doctrine.orm.entity_manager , %ant.photo_rest.model.vote.class%]
+    ant.photo_rest.manager.participant_manager:
+        class: %ant.photo_rest.entity_manager.participant_manager.class%
+        arguments: [@doctrine.orm.entity_manager , %ant.photo_rest.model.participant_interface.class%]
+    ant.photo_rest.manager.album_manager:
+        class: %ant.photo_rest.entity_manager.album_manager.class%
+        arguments: [@doctrine.orm.entity_manager , %ant.photo_rest.model.album.class%]

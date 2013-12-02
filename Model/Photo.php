@@ -26,11 +26,10 @@ abstract class Photo implements PhotoInterface {
 	protected $participant;
 	
 	/**
-	 * @ORM\Column(type="datetime", nullable=true)
-	 *
-	 * @Assert\DateTime
+	 * relation with Entity Vote, array of votes 
+	 * @var unknown
 	 */
-	protected $updatedAt;
+	protected $votes;
 	
 	/**
 	 * @ORM\Column(type="datetime")
@@ -49,7 +48,7 @@ abstract class Photo implements PhotoInterface {
 	/**
 	 * @Assert\File(
 	 *     maxSize="2000k",
-	 *     mimeTypes={"image/png", "image/jpeg", "image/pjpeg"}
+	 *     mimeTypes={"image/png", "image/jpeg", "image/pjpeg", "application/octet-stream"}
 	 * )
 	 *
 	 * @var File $image
@@ -60,13 +59,15 @@ abstract class Photo implements PhotoInterface {
 	 * @var int
 	 * @ORM\Column(type="string", nullable=true)
 	 */
-	protected $votes=0;
+	protected $numberVotes=0;
 	/**
 	 * score of the photo
 	 * @var float
 	 * @ORM\Column(type="float", nullable=true)
 	 */
 	protected $score=null;
+	
+	protected $album;
 	
 	public function __construct()
 	{
@@ -108,6 +109,11 @@ abstract class Photo implements PhotoInterface {
 	public function setPath($path) {
 		$this->path = $path;
 	}
+	
+	public function getPublicatedAt() {
+		return $this->publicatedAt;
+	}
+	
 	public function getScore() {
 		return $this->score;
 	}
@@ -115,11 +121,26 @@ abstract class Photo implements PhotoInterface {
 	public function setScore($score) {
 		$this->score = $score;
 	}
-	public function getVotes() {
-		return $this->votes;
+	public function getNumberVotes() {
+		return $this->numberVotes;
 	}
 	
-	public function setVotes($votes) {
-		$this->votes = $votes;
+	public function setNumberVotes($numberVotes) {
+		$this->numberVotes = $numberVotes;
+	}
+	
+	public function setAlbum($album)
+	{
+		$this->album = $album;
+	}
+	
+	public function getAlbum()
+	{
+		return $this->album;
+	}
+	
+	public function hasAlbum()
+	{
+		return !($this->album == null);
 	}
 }

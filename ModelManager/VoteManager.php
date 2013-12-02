@@ -70,4 +70,9 @@ abstract class VoteManager
 	{
 		return $this->findVoteBy(array('photo' => $photoId, 'participant' => $participantId));
 	}
+	
+	public function isMePhoto(PhotoInterface $photoId, ParticipantInterface $user)
+	{
+		return ($photoId->getParticipant() == $user);
+	}
 }

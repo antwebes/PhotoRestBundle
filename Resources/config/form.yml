@@ -2,12 +2,14 @@ parameters:
     ant.photo_rest.form_factory.photo.class.default: Ant\PhotoRestBundle\FormFactory\PhotoFormFactory
     ant.photo_rest.form_type.photo.class: Ant\PhotoRestBundle\FormType\PhotoType
     ant.photo_rest.photo.form_name: ant_photo
-    ant.photo_rest.model.photo.class: Chatea\FotoBundle\Entity\Photo
+    
+    ant.photo_rest.form_factory.album.class.default: Ant\PhotoRestBundle\FormFactory\AlbumFormFactory
+    ant.photo_rest.form_type.album.class: Ant\PhotoRestBundle\FormType\AlbumType
+    ant.photo_rest.album.form_name: ant_photo_album
     
     ant.photo_rest.form_factory.vote.class.default: Ant\PhotoRestBundle\FormFactory\VoteFormFactory
     ant.photo_rest.form_type.vote.class: Ant\PhotoRestBundle\FormType\VoteType
-    ant.photo_rest.vote.form_name: ant_vote    
-    ant.photo_rest.model.vote.class: Chatea\FotoBundle\Entity\Vote
+    ant.photo_rest.vote.form_name: ant_vote
     
 services:
     ant.photo_rest.form_factory.photo.default:
@@ -28,3 +30,13 @@ services:
         arguments: [%ant.photo_rest.model.vote.class%]
         tags:
             - { name: form.type , alias: %ant.photo_rest.vote.form_name% }
+            
+    ant.photo_rest.form_factory.album.default:
+        class: %ant.photo_rest.form_factory.album.class.default%
+        arguments: [@form.factory, @ant.photo_rest.form_type.album.default, %ant.photo_rest.album.form_name%]
+        
+    ant.photo_rest.form_type.album.default:
+        class: %ant.photo_rest.form_type.album.class%
+        arguments: [%ant.photo_rest.model.album.class%]
+        tags:
+            - { name: form.type , alias: %ant.photo_rest.album.form_name% }

@@ -3,16 +3,17 @@
 namespace Ant\PhotoRestBundle\Model;
 
 use Ant\PhotoRestBundle\Model\VoteInterface;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
-use Doctrine\ORM\Mapping as ORM;
-
+/**
+ *@ExclusionPolicy("all")
+ */
 abstract class Vote implements VoteInterface {
 		
 	/**
 	 * Participant that created the vote
-	 *
+	 * @Expose
 	 * @var ParticipantInterface
 	 */
 	protected $participant;
@@ -25,13 +26,12 @@ abstract class Vote implements VoteInterface {
 	protected $photo;
 	
 	/**
-	 * @ORM\Column(type="datetime")
-	 *
-	 * @Assert\Date
+	 *@Expose
 	 */
 	protected $publicatedAt;
+	
 	/**
-	 * @ORM\Column(type="float")
+	 *@Expose
 	 */
 	protected $score;
 	

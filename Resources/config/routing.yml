@@ -1,30 +1,38 @@
 ant_photo_rest_create:
-    pattern: /photo
+    pattern: /{id}/photo
     defaults: { _controller: AntPhotoRestBundle:Photo:create }
-    methods: [POST, PUT]
-ant_photo_rest_delete:
-    pattern: /photo/{id}
-    defaults: { _controller: AntPhotoRestBundle:Photo:delete }
+    methods: [POST]
+    
+ant_photo_rest_insert_to_album:
+    pattern: /{user_id}/photos/{photo_id}/albums/{album_id}
+    defaults: { _controller: AntPhotoRestBundle:Photo:insertToAlbum }
+    methods: [POST]
+ant_photo_rest_delete_of_album:
+    pattern: /{user_id}/photos/{photo_id}/albums
+    defaults: { _controller: AntPhotoRestBundle:Photo:deleteOfAlbum }
     methods: [DELETE]
-ant_photo_rest_show:
-    pattern: /photo/{id}
-    defaults: { _controller: AntPhotoRestBundle:Photo:show }
-    methods: [GET]   
-    
-    
+ant_photo_rest_albums_user:
+    pattern: /{id}/albums
+    defaults: { _controller: AntPhotoRestBundle:Album:list }
+    methods: [GET]
+ant_photo_rest_album_user:
+    pattern: /{user_id}/albums/{album_id}
+    defaults: { _controller: AntPhotoRestBundle:Album:show }
+    methods: [GET]
+
 ant_photo_rest_vote_create:
-    pattern: /vote
+    pattern: /{id}/vote
     defaults: { _controller: AntPhotoRestBundle:Vote:create }
     methods: [POST]
 ant_photo_rest_vote_delete:
-    pattern: /vote/{photoId}
+    pattern: /{id}/votes/{photo_id}
     defaults: { _controller: AntPhotoRestBundle:Vote:delete }
     methods: [DELETE]
-ant_photo_rest_vote_show:
-    pattern: /vote/{photoId}
-    defaults: { _controller: AntPhotoRestBundle:Vote:show }
+ant_photo_rest_vote_all_show:
+    pattern: /{id}/votes
+    defaults: { _controller: AntPhotoRestBundle:Vote:votes }
     methods: [GET]
 ant_photo_rest_vote_show:
-    pattern: /vote
-    defaults: { _controller: AntPhotoRestBundle:Vote:votes }
+    pattern: /{id}/photos/{photo_id}/votes
+    defaults: { _controller: AntPhotoRestBundle:Vote:show }
     methods: [GET]

@@ -2,7 +2,9 @@
 
 namespace Ant\PhotoRestBundle\ModelManager;
 
+use Ant\PhotoRestBundle\Model\ParticipantInterface;
 use Ant\PhotoRestBundle\Model\PhotoInterface;
+use Ant\PhotoRestBundle\Model\AlbumInterface;
 
 /**
  * With this class you can create a entity Photo, without class final and independent of ORM
@@ -10,7 +12,7 @@ use Ant\PhotoRestBundle\Model\PhotoInterface;
  *
  */
 
-abstract class PhotoManager
+abstract class PhotoManager implements PhotoManagerInterface
 {
 	public function savePhoto(PhotoInterface $photo)
 	{
@@ -35,9 +37,15 @@ abstract class PhotoManager
 	 */
 	public function findPhotoById($id)
 	{
-		return $this->findPhotoBy(array('id' => $id));
+		return $this->findOnePhotoBy(array('id' => $id));
 	}
-	
+	/**
+	 * get all photos of an user
+	 */
+	public function findAllMePhotos(ParticipantInterface $participant)
+	{
+		return $this->findPhotoBy(array('participant' => $participant));
+	}
 	/**
 	 * calculate the new score of a photo with the new vote
 	 * @param PhotoInterface $photo
@@ -46,19 +54,44 @@ abstract class PhotoManager
 	public function updateScore(PhotoInterface $photo, $newVote, $operator)
 	{
 		$scoreOld = $photo->getScore();
-		$votesOld = $photo->getVotes();
+		
+		$votesOld = $photo->getNumberVotes();
+
 		if ($operator == '+'){
 			$newScore = ($votesOld * $scoreOld + $newVote) / ($votesOld + 1);
 			$photo->setScore($newScore);
-			$photo->setVotes($votesOld + 1);
+			$photo->setNumberVotes($votesOld + 1);
 		}
 		else if ($operator == '-'){
+			
 			if ( ($votesOld - 1) != 0 ){
 				$newScore = ($votesOld * $scoreOld - $newVote) / ($votesOld - 1) ;
 			} else $newScore = null;
 			$photo->setScore($newScore);
-			$photo->setVotes($votesOld - 1);
+			$photo->setNumberVotes($votesOld - 1);
 		}
+		
+		$this->doSavePhoto($photo);
+	}
+	
+	public function isOwner(ParticipantInterface $user, PhotoInterface $photo)
+	{
+		return ($user->getId() == $photo->getParticipant()->getId());
+	}
+	
+	public function insertToAlbum(PhotoInterface $photo, AlbumInterface $album)
+	{
+// 		$photo->setAlbum($album);
+		$album->addPhoto($photo);
+		
+		$this->doSavePhoto($photo);		
+	}
+	
+	public function deleteOfAlbum(PhotoInterface $photo, AlbumInterface $album)
+	{
+		$album->getPhotos()->removeElement($photo);
+		$photo->setAlbum(null);
+		
 		$this->doSavePhoto($photo);
 	}
 }

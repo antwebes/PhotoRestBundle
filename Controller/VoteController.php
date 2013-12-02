@@ -6,7 +6,15 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Ant\PhotoRestBundle\Controller\BaseRestController;
+use Chatea\UtilBundle\Controller\BaseRestController;
+
+use JMS\SecurityExtraBundle\Annotation\SecureParam;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
+use Ant\PhotoRestBundle\Model\ParticipantInterface;
+
+use FOS\RestBundle\Controller\Annotations\QueryParam;
 
 /**
  * Vote controller.
@@ -15,8 +23,9 @@ class VoteController extends BaseRestController
 {
 	/**
 	 * Create a new vote entity
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="create a vote",
+	 *  	section="photo",
 	 *  	input="Ant\PhotoRestBundle\FormType\VoteType",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
@@ -24,8 +33,10 @@ class VoteController extends BaseRestController
 	 *         400="Bad request"
 	 *     }
 	 *  )
+	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
+	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"})
 	 */
-	public function createAction(Request $request)
+	public function createAction(ParticipantInterface $user, Request $request)
 	{
 		$dataRequest = $request->request->get('vote');
 		//get id of photo from request
@@ -35,14 +46,15 @@ class VoteController extends BaseRestController
 		
 		if (!$photo) {
 			return $this->createError('Unable to find Photo entity', '42', '404');
-    	}    	
-    	$currentUser = $this->get('security.context')->getToken()->getUser();
+    	}
     	
 		$voteManager = $this->get('ant.photo_rest.manager.vote_manager');
-		$existVote = $voteManager->findVoteByPhotoAndParticipant($photoId, $currentUser->getId());
+		$existVote = $voteManager->findVoteByPhotoAndParticipant($photoId, $user->getId());
+		//code error incorrect TODO
+		if ($voteManager->isMePhoto($photo, $user)) return $this->serviceError('photo_rest.non_vote_own_photo', '409');;
 		
 		if ($existVote){
-			return $this->createError('You have already voted this photo ', '46', '409');
+			return $this->serviceError('photo_rest.already_vote_photo', '409');
 		}
 
 		$vote = $voteManager->createVote();
@@ -54,52 +66,64 @@ class VoteController extends BaseRestController
 		
 		if ($form->isValid()) {
 						
-			$vote->setParticipant($currentUser);
+			$vote->setParticipant($user);
 			$voteManager->saveVote($vote, $photo);
-			return $this->buildView($vote, 200);
+			return $this->buildResourceView($vote, 200, "vote_list");
 		}
 		return $this->buildFormErrorsView($form);
 	}
 	/**
-	 * Show the vote of a photo
-	 *  @ApiDoc(
-	 *  	description="show a vote",
+	 * Show my vote of a photo of the user
+	 * @ApiDoc(
+	 *  	description="show my vote of a photo of the user",
+	 *  	section="photo",
+	 *  	input="photo_id",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
 	 *         200="Returned when successful",
 	 *         404="Unable to find Vote or Photo entity with code 42"
 	 *     }
 	 *  )
+	 * @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"})
+	 * @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN")
 	 */
-	public function showAction($photoId)
+	public function showAction(ParticipantInterface $user, $photo_id)
 	{
-		$result = $this->getPhotoAndVote($photoId);
+		$result = $this->getPhotoAndVote($photo_id, $user);
 		
 		if (is_array($result)){
-			return $this->buildView($result['vote'], 200);
+			return $this->buildResourceView($result['vote'], 200, 'vote_list');
 		}
 		else return $result;
 	}
 	/**
 	 * Show all votes of an user
-	 *  @ApiDoc(
-	 *  	description="show a vote of an user",
+	 * @ApiDoc(
+	 *  	description="show all votes of an user",
+	 *  	section="photo",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
 	 *         200="Returned when successful",
 	 *     }
 	 *  )
+	 * @QueryParam(name="limit", description="Max number of records to be returned")
+     * @QueryParam(name="offset", description="Number of records to skip")
 	 */
-	public function votesAction()
+	public function votesAction($id)
 	{
-		$currentUser = $this->get('security.context')->getToken()->getUser();
+		$participantManager = $this->get('ant.photo_rest.manager.participant_manager');
+		$currentUser = $participantManager->findParticipantById($id);
 		$votes = $this->get('ant.photo_rest.manager.vote_manager')->findAllVotesOfAnParticipant($currentUser);
-		return $this->buildView($votes, 200);
+		$linkOverrides = array('route' => 'ant_photo_rest_vote_all_show', 'parameters' => array('id'), 'rel' => 'self', 'entity' => $currentUser);
+
+		return $this->buildPagedResourcesView($votes, 'Ant\PhotoBundle\Entity\Vote', 200, 'vote_list', array(), $linkOverrides);
 	}
 	/**
 	 * Delete a new vote entity
-	 *  @ApiDoc(
+	 * @ApiDoc(
 	 *  	description="delete a vote",
+	 *  	section="photo",
+	 *      input="Photo_id",
 	 *  	output="Ant\PhotoRestBundle\Model\Vote",
 	 *		statusCodes={
 	 *         200="Returned when successful",
@@ -107,20 +131,21 @@ class VoteController extends BaseRestController
 	 *         404="Unable to find Vote or Photo entity with code 42"
 	 *     }
 	 *  )
+	 *  @SecureParam(name="user", permissions="OWNER,HAS_ROLE_ROLE_ADMIN,HAS_ROLE_APPLICATION")
+	 *  @ParamConverter("user", class="ApiBundle:User", options={"error" = "user.entity.unable_find"})
 	 */
-	public function deleteAction($photoId)
+	public function deleteAction(ParticipantInterface $user, $photo_id)
 	{
-		$result = $this->getPhotoAndVote($photoId);
+		$result = $this->getPhotoAndVote($photo_id, $user);
 		
 		if (is_array($result)){
-			$voteManager->deleteVote($vote, $photo);
-		
+			$this->get('ant.photo_rest.manager.vote_manager')->deleteVote($result['vote'], $result['photo']);
 			return $this->buildView('Vote deleted', 200);
 		}
 		else return $result;		
 	}
 	
-	private function getPhotoAndVote($photoId)
+	private function getPhotoAndVote($photoId, ParticipantInterface $user)
 	{
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$photo = $photoManager->findPhotoById($photoId);
@@ -128,10 +153,9 @@ class VoteController extends BaseRestController
 		if (!$photo) {
 			return $this->createError('Unable to find Photo entity', '42', '404');
 		}
-		$currentUser = $this->get('security.context')->getToken()->getUser();
 		
 		$voteManager = $this->get('ant.photo_rest.manager.vote_manager');
-		$vote = $voteManager->findVoteByPhotoAndParticipant($photoId, $currentUser->getId());
+		$vote = $voteManager->findVoteByPhotoAndParticipant($photoId, $user->getId());
 		
 		if (!$vote) {
 			return $this->createError('Unable to find Vote entity', '42', '404');
