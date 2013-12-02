@@ -69,7 +69,7 @@ class PhotoManager extends BasePhotoManager
 		$this->em->flush();
 	}
 	/**
-	 * Returns the fully qualified comment thread class name
+	 * Returns the fully qualified photo class name
 	 *
 	 * @return string
 	 **/
