@@ -1,7 +1,7 @@
 ant_photo_rest_create:
     pattern: /{id}/photo
     defaults: { _controller: AntPhotoRestBundle:Photo:create }
-    methods: [POST]
+    methods: [POST, OPTIONS]
     
 ant_photo_rest_insert_to_album:
     pattern: /{user_id}/photos/{photo_id}/albums/{album_id}

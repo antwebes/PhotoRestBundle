@@ -1,7 +1,7 @@
 ant_photo_rest_show_user_all:
     pattern: /users/{id}/photos
     defaults: { _controller: AntPhotoRestBundle:Photo:photosUser }
-    methods: [GET, OPTIONS]
+    methods: [GET]
 ant_photo_rest_show:
     pattern: /photos/{id}
     defaults: { _controller: AntPhotoRestBundle:Photo:show }
