@@ -228,8 +228,6 @@ class PhotoController extends BaseRestController
 		$album = $this->get('ant.photo_rest.manager.album_manager')->findAlbumById($album_id);		
 		if (!$album) return $this->createError('Unable to find Album entity', '42', '404');
 		
-		$securityContext = $this->container->get('security.context');
-		
 		if ( !($photoManager->isOwner($user, $photo) or $this->get('ant.photo_rest.manager.album_manager')->isOwner($user, $album)
 				or $securityContext->isGranted(array(new Expression('hasRole("ROLE_ADMIN") or hasRole("ROLE_APPLICATION")')))
 				 )) return $this->createError('This user has no permission for this action', '32', '403');
