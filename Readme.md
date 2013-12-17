@@ -19,3 +19,5 @@ Upload image by curl
 =====================
 
 curl -v -H "Accept: application/json" -H "Content-Type: multipart/form-data" -X POST -F "title=holaaa" -F "image=@/home/pc/Escritorio/torrente222.jpg" http://url/api/ant/photo?access_token={token}
+
+update photo path url if use_full_path in  server_base_url parameter

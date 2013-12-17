@@ -31,6 +31,7 @@ class PhotoController extends BaseRestController
 {
 	/**
 	 * Create a new photo entity
+     *
 	 * @ApiDoc(
 	 *  	description="create a photo",
 	 *		section="photo",
@@ -47,17 +48,17 @@ class PhotoController extends BaseRestController
 	public function createAction(ParticipantInterface $user, Request $request)
 	{
 		$dataRequest = $request->request->all();
-		
+
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$photo = $photoManager->createPhoto();
-		
+
 		$form = $this->get('ant.photo_rest.form_factory.photo.default')->createForm();
 		$form->setData($photo);
-		
+
 		if ($request->isMethod('POST')) {
-			
-			$form->bind($dataRequest);
-			
+
+			$form->submit($dataRequest);
+
 			if ($form->isValid()) {
 				$photo->setParticipant($user);
 				if ($request->files->get('image')){
@@ -69,19 +70,56 @@ class PhotoController extends BaseRestController
 				if (!isset($image)){
 					return $this->serviceError('photo_rest.file.not_found', '404');
 				}
-				
+
+
+
 				$url = $this->getPhotoUploader()->upload($image);
 				$photo->setPath($url);
 				$photoManager->savePhoto($photo);
 				return $this->buildResourceView($photo, 200, 'photo_list');
 			}
 			return $this->buildFormErrorsView($form);
-		}		
+		}
 		return $this->render(
 				'AntPhotoRestBundle:Photo:add.html.twig',
 				array('form'  => $form->createView())
 		);
 	}
+    /**
+     * Update a photo entity
+     *
+     * @ApiDoc(
+     *  	description="update a photo",
+     *		section="photo",
+     *  	input="Ant\PhotoRestBundle\FormType\PhotoTypeUpdate",
+     *  	output="Ant\PhotoRestBundle\Model\Photo",
+     *		statusCodes={
+     *         201="Update entity created",
+     *         400="Bad request"
+     *     }
+     *  )
+     *  @ParamConverter("photo", class="FotoBundle:Photo", options={"error" = "photo.entity.unable_find", "id" = "photo_id"})
+
+     */
+    public function updateAction(Photo $photo,  Request $request)
+    {
+        if ('PATCH' === $request->getMethod()){
+            $data  = $request->request->get('ant_photo');
+            $title = array_key_exists('title',$data)? $data['title'] : null;
+            if($title == null){
+                return $this->createError('Photo title do not entity', '34', '400');
+            }
+            try{
+                $photo->setTitle($title);
+
+                $photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
+                $photoManager->update($photo);
+            }catch(BadRequestHttpException $e){
+                return $this->serviceError($e->getMessage(), '400');
+            }
+            return $this->buildResourceView($photo, 200, 'photo_list');
+        }
+    }
 	/**
 	 * Show a photo entity
 	 * @ApiDoc(
@@ -105,6 +143,7 @@ class PhotoController extends BaseRestController
 		return $this->buildResourceView($photo, 200, 'photo_list');
 		
 	}
+
 	/**
 	 * List all Photo entities of an user
 	 * @ApiDoc(
@@ -274,7 +313,7 @@ class PhotoController extends BaseRestController
 	}
 	
 	/**
-	 * @return Ant\PhotoRestBundle\Upload\PhotoUploader
+	 * @return \Ant\PhotoRestBundle\Upload\PhotoUploader
 	 */
 	
 	protected function getPhotoUploader()
