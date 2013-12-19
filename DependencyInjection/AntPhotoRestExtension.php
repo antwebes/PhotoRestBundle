@@ -41,15 +41,8 @@ class AntPhotoRestExtension extends Extension
         $container->setParameter('ant.photo_rest.model.album.class', $config['album_class']);
         $container->setParameter('ant.photo_rest.model.vote.class',  $config['vote_class']);
         $container->setParameter('ant.photo_rest.model.use_full_path', $config['use_full_path']);
-        $server_base_url = '';
-        if(empty($config['server_base_url'])){
-            $schema = array_key_exists('HTTPS', $_SERVER) ?'https' : 'http';
-            $server_base_url = $schema.'://'.$_SERVER['SERVER_NAME'].'uploads/';
-        }else{
-            $server_base_url = $config['server_base_url'];
-        }
         //change this for you hostmame or s3 server
-        $container->setParameter('ant.photo_rest.model.server_base_url', $server_base_url);
+        //$container->setParameter('ant.photo_rest.model.server_base_url', $config['server_base_url']);
         $container->setParameter('ant.photo_rest.upload.thumbnails', $config['upload']['thumbnails']);
 
 //         $container->setParameter('ant_badge.badge_class', $config['badge_class']);
