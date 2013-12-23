@@ -35,7 +35,8 @@ class PhotoTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($score, $photo->getScore());
 		$this->assertNotNull($photo->getPublicatedAt());
 	}
-	
+
+
 	public function testPath()
 	{
 		$photo = $this->getPhoto();

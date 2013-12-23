@@ -25,6 +25,8 @@ class Configuration implements ConfigurationInterface
         		->scalarNode('photo_class')->isRequired()->cannotBeEmpty()->end()
         		->scalarNode('album_class')->isRequired()->cannotBeEmpty()->end()
         		->scalarNode('vote_class')->isRequired()->cannotBeEmpty()->end()
+                ->scalarNode('use_full_path')->defaultValue(false)->cannotBeEmpty()->end()
+                ->scalarNode('server_base_url')->end()
                 ->arrayNode('upload')
                     ->children()
                         ->arrayNode('thumbnails')

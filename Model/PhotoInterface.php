@@ -16,10 +16,9 @@ interface PhotoInterface {
 
 	public function setImage(UploadedFile $image = null);
 
-    
 
-   
+    public function getPath();
 
+    public function setPath($path);
 
-    
 }
