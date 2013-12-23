@@ -68,7 +68,7 @@ class VoteController extends BaseRestController
 						
 			$vote->setParticipant($user);
 			$voteManager->saveVote($vote, $photo);
-			return $this->buildResourceView($vote, 200, "vote_list");
+			return $this->buildResourceView($vote, 200, "vote_show");
 		}
 		return $this->buildFormErrorsView($form);
 	}
@@ -92,7 +92,7 @@ class VoteController extends BaseRestController
 		$result = $this->getPhotoAndVote($photo_id, $user);
 		
 		if (is_array($result)){
-			return $this->buildResourceView($result['vote'], 200, 'vote_list');
+			return $this->buildResourceView($result['vote'], 200, 'vote_show');
 		}
 		else return $result;
 	}
