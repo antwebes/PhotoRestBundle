@@ -55,7 +55,7 @@ class AlbumController extends BaseRestController
 			
 			$this->get('ant.photo_rest.manager.album_manager')->save($album);
 		
-			return $this->buildView($album, 201, 'photo_list');
+			return $this->buildView($album, 201, 'album_show');
 		}
 		return $this->buildFormErrorsView($form);
 	}
@@ -119,7 +119,7 @@ class AlbumController extends BaseRestController
             return $this->createError('Unable to find Photo entity', '32', '404');
         }
 
-        return $this->buildResourceView($album, 200, 'photo_list');
+        return $this->buildResourceView($album, 200, 'album_show');
     }
 
 	/**
@@ -144,6 +144,6 @@ class AlbumController extends BaseRestController
 		
         $linkOverrides = array('route' => 'ant_photo_rest_albums_user', 'parameters' => array('id' => 'id'), 'rel' => 'self', 'entity' => $user);
 		
-		return $this->buildPagedResourcesView($albums, 'Ant\PhotoBundle\Entity\Album', 200, 'photo_list', array(), $linkOverrides);
+		return $this->buildPagedResourcesView($albums, 'Ant\PhotoBundle\Entity\Album', 200, 'album_list', array(), $linkOverrides);
 	}
 }

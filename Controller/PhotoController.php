@@ -73,7 +73,7 @@ class PhotoController extends BaseRestController
 				$url = $this->getPhotoUploader()->upload($image);
 				$photo->setPath($url);
 				$photoManager->savePhoto($photo);
-				return $this->buildResourceView($photo, 200, 'photo_list');
+				return $this->buildResourceView($photo, 200, 'photo_show');
 			}
 			return $this->buildFormErrorsView($form);
 		}		
@@ -102,7 +102,7 @@ class PhotoController extends BaseRestController
 		if (null === $photo) {
 			return $this->createError('Unable to find Photo entity', '42', '404');
 		}
-		return $this->buildResourceView($photo, 200, 'photo_list');
+		return $this->buildResourceView($photo, 200, 'photo_show');
 		
 	}
 	/**
