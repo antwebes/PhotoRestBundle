@@ -91,41 +91,50 @@ abstract class Photo implements PhotoInterface {
 		return $this->image;
 	}
 	
-	public function setImage(UploadedFile $image = null) {
+	public function setImage(UploadedFile $image = null)
+	{
 		$this->image = $image;
 	}
 	
-	public function getTitle() {
+	public function getTitle()
+	{
 		return $this->title;
 	}
 	
-	public function setTitle($title) {
+	public function setTitle($title)
+	{
 		$this->title = $title;
 	}
 	public function getPath() {
 		return $this->path;
 	}
 	
-	public function setPath($path) {
+	public function setPath($path)
+	{
 		$this->path = $path;
 	}
 	
-	public function getPublicatedAt() {
+	public function getPublicatedAt()
+	{
 		return $this->publicatedAt;
 	}
 	
-	public function getScore() {
+	public function getScore()
+	{
 		return $this->score;
 	}
 	
-	public function setScore($score) {
+	public function setScore($score)
+	{
 		$this->score = $score;
 	}
-	public function getNumberVotes() {
+	public function getNumberVotes()
+	{
 		return $this->numberVotes;
 	}
 	
-	public function setNumberVotes($numberVotes) {
+	public function setNumberVotes($numberVotes)
+	{
 		$this->numberVotes = $numberVotes;
 	}
 	
