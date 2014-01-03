@@ -13,12 +13,14 @@ class PhotoUploader
     private $filesystem;
     private $resizer;
     private $thumnailsSizes;
+    private $server_web_dir;
 
-    public function __construct(Filesystem $filesystem, Resizer $resizer, $thumnailsSizes)
+    public function __construct(Filesystem $filesystem, Resizer $resizer, $thumnailsSizes, $server_root_dir)
     {
         $this->filesystem = $filesystem;
         $this->resizer = $resizer;
         $this->thumnailsSizes = $thumnailsSizes;
+        $this->server_web_dir = $server_root_dir;
     }
 
     public function upload(UploadedFile $file)
@@ -53,11 +55,15 @@ class PhotoUploader
             $image = $this->resizer->resize($originalImageFile, $width, $height, 'proportional');
             $content = $image->get($extension);
             $file = $this->filesystem->createFile($thumbFilename);
-            
             $file->setContent($content);
         }
-
         $this->filesystem->delete($originalImageFile);
+        //new original file
+        $new_originalImageFile = sprintf("%s.%s", $baseName, $extension);
+        $image = $this->filesystem->read(sprintf("%s_%s.%s", $baseName, 'large', $extension));
+        $file = $this->filesystem->createFile($new_originalImageFile);
+        $file->setContent($image);
+
     }
 
     private function isImage($file){
