@@ -230,7 +230,7 @@ class PhotoController extends BaseRestController
 				
 		$path = $photo->getPath();
 		$photo = $photoManager->deletePhoto($photo);
-		
+
 		$dispatcher = $this->container->get('event_dispatcher');
 		$dispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($path));
 		

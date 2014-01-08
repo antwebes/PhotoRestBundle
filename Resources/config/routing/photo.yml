@@ -17,7 +17,7 @@ ant_photo_rest_album_delete:
 ant_photo_rest_delete:
     pattern: /photos/{photo_id}
     defaults: { _controller: AntPhotoRestBundle:Photo:delete }
-    methods: [DELETE, OPTIONS]
+    methods: [DELETE]
 ant_photo_rest_update:
     pattern: /photos/{photo_id}
     defaults: { _controller: AntPhotoRestBundle:Photo:update }
