@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Ant\PhotoRestBundle\ModelManager\PhotoManager as BasePhotoManager;
 use Ant\PhotoRestBundle\Model\PhotoInterface;
+use Gaufrette\Filesystem;
 
 class PhotoManager extends BasePhotoManager
 {
@@ -25,15 +26,18 @@ class PhotoManager extends BasePhotoManager
 	 * @var string
 	 */
 	protected $class;
-	
+
 	/**
 	 * Constructor.
 	 *
+	 * @param Gaufrette\fileSystem                         $fileSystem
 	 * @param \Doctrine\ORM\EntityManager                  $em
 	 * @param string                                       $class
 	 */
-	public function __construct(EntityManager $em, $class)
+	public function __construct(Filesystem $fileSystem, EntityManager $em, $class)
 	{
+		parent::__construct($fileSystem);
+
 		$this->em = $em;
 		$this->repository = $em->getRepository($class);
 	

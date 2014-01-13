@@ -19,6 +19,8 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 	/** @var \PHPUnit_Framework_MockObject_MockObject */
 	protected $repository;
 
+	protected $fileSystem;
+
 	public function setUp()
 	{		
 		if (!interface_exists('Doctrine\Common\Persistence\ObjectManager')) {
@@ -27,26 +29,29 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 		
 		$this->repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
 		$metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+		$this->fileSystem = $this->getMockBuilder('Gaufrette\Filesystem')
+			->disableOriginalConstructor()
+			->getMock();
 		
 		$this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-		->disableOriginalConstructor()
-		->getMock();
+			->disableOriginalConstructor()
+			->getMock();
 		
 		$this->em->expects($this->once())
-		->method('getRepository')
-		->with($this->equalTo(static::PHOTO_CLASS))
-		->will($this->returnValue($this->repository));
+			->method('getRepository')
+			->with($this->equalTo(static::PHOTO_CLASS))
+			->will($this->returnValue($this->repository));
 		
 		$this->em->expects($this->once())
-		->method('getClassMetadata')
-		->with($this->equalTo(static::PHOTO_CLASS))
-		->will($this->returnValue($metadata));
+			->method('getClassMetadata')
+			->with($this->equalTo(static::PHOTO_CLASS))
+			->will($this->returnValue($metadata));
 		
 		$metadata->expects($this->any())
-		->method('getName')
-		->will($this->returnValue(static::PHOTO_CLASS));
+			->method('getName')
+			->will($this->returnValue(static::PHOTO_CLASS));
 		
-		$this->photoManager = $this->createPhotoManager($this->em, static::PHOTO_CLASS);
+		$this->photoManager = $this->createPhotoManager($this->fileSystem, $this->em, static::PHOTO_CLASS);
 	}
 	
 	/**
@@ -69,9 +74,9 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 		return $participant;
 	}
 	
-	protected function createPhotoManager($em, $photoClass)
+	protected function createPhotoManager($fileSystem, $em, $photoClass)
 	{
-		return new PhotoManager($em, $photoClass);	
+		return new PhotoManager($fileSystem, $em, $photoClass);	
 	}
 	
 	public function testGetClass()
@@ -90,6 +95,9 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 	public function testDeletePhoto()
 	{
 		$photo = $this->getPhoto();
+		$photo->setPath('unpath.jpg');
+
+		$this->fileSystem->expects($this->once())->method('delete')->with('original/unpath.jpg');
 		$this->em->expects($this->once())->method('remove')->with($this->equalTo($photo));
 		$this->em->expects($this->once())->method('flush');
 	

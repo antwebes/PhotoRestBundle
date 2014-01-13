@@ -13,14 +13,12 @@ class PhotoUploader
     private $filesystem;
     private $resizer;
     private $thumnailsSizes;
-    private $server_web_dir;
 
-    public function __construct(Filesystem $filesystem, Resizer $resizer, $thumnailsSizes, $server_root_dir)
+    public function __construct(Filesystem $filesystem, Resizer $resizer, $thumnailsSizes)
     {
         $this->filesystem = $filesystem;
         $this->resizer = $resizer;
         $this->thumnailsSizes = $thumnailsSizes;
-        $this->server_web_dir = $server_root_dir;
     }
 
     public function upload(UploadedFile $file)

@@ -6,6 +6,8 @@ use Ant\PhotoRestBundle\Model\ParticipantInterface;
 use Ant\PhotoRestBundle\Model\PhotoInterface;
 use Ant\PhotoRestBundle\Model\AlbumInterface;
 
+use Gaufrette\Filesystem;
+
 /**
  * With this class you can create a entity Photo, without class final and independent of ORM
  * @author Chrysweel
@@ -14,6 +16,16 @@ use Ant\PhotoRestBundle\Model\AlbumInterface;
 
 abstract class PhotoManager implements PhotoManagerInterface
 {
+	/**
+	 * @var Filesystem
+	 */
+	protected $fileSystem;
+
+	public function __construct(Filesystem $fileSystem)
+	{
+		$this->fileSystem = $fileSystem;
+	}
+
 	public function savePhoto(PhotoInterface $photo)
 	{
 		$this->doSavePhoto($photo);
@@ -21,7 +33,15 @@ abstract class PhotoManager implements PhotoManagerInterface
 	
 	public function deletePhoto(PhotoInterface $photo)
 	{
+		$originalPath = sprintf("original/%s", $photo->getPath());
+
+		$this->deleteFile($originalPath);
 		$this->doDeletePhoto($photo);
+	}
+
+	public function deleteFile($path)
+	{
+		$this->fileSystem->delete($path);
 	}
 	
 	public function createPhoto()
