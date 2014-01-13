@@ -59,7 +59,7 @@ class PhotoUploader
         }
         $this->filesystem->delete($originalImageFile);
         //new original file
-        $new_originalImageFile = sprintf("%s.%s", $baseName, $extension);
+        $new_originalImageFile = sprintf("original/%s.%s", $baseName, $extension);
         $image = $this->filesystem->read(sprintf("%s_%s.%s", $baseName, 'large', $extension));
         $file = $this->filesystem->createFile($new_originalImageFile);
         $file->setContent($image);
