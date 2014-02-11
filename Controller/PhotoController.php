@@ -2,6 +2,8 @@
 
 namespace Ant\PhotoRestBundle\Controller;
 
+use Imagine\Exception\InvalidArgumentException;
+
 use Chatea\UtilBundle\Controller\BaseRestController;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -229,7 +231,12 @@ class PhotoController extends BaseRestController
 			return $this->createError('This user has no permission for this action', '32', '403');
 				
 		$path = $photo->getPath();
-		$photo = $photoManager->deletePhoto($photo);
+		
+		try{
+			$photo = $photoManager->deletePhoto($photo);
+		}catch (\InvalidArgumentException $e) {
+			return $this->buildView($e->getMessage(), 400);
+		}	
 
 		$dispatcher = $this->container->get('event_dispatcher');
 		$dispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($path));

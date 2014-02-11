@@ -33,15 +33,17 @@ abstract class PhotoManager implements PhotoManagerInterface
 	
 	public function deletePhoto(PhotoInterface $photo)
 	{
-		$originalPath = sprintf("original/%s", $photo->getPath());
-
-		$this->deleteFile($originalPath);
+		$this->deleteFile($photo->getPath());
 		$this->doDeletePhoto($photo);
 	}
 
 	public function deleteFile($path)
 	{
+		if (!$this->fileSystem->has($path)){
+			throw new \InvalidArgumentException("The path of photo does not exist and was not deleted");
+		}
 		$this->fileSystem->delete($path);
+
 	}
 	
 	public function createPhoto()
