@@ -73,8 +73,6 @@ class PhotoController extends BaseRestController
 					return $this->serviceError('photo_rest.file.not_found', '404');
 				}
 
-
-
 				$url = $this->getPhotoUploader()->upload($image);
 				$photo->setPath($url);
 				$photoManager->savePhoto($photo);
@@ -106,8 +104,12 @@ class PhotoController extends BaseRestController
     public function updateAction(Photo $photo,  Request $request)
     {
         if ('PATCH' === $request->getMethod()){
-            $data  = $request->request->get('ant_photo');
-            $title = array_key_exists('title',$data)? $data['title'] : null;
+//             $data  = $request->request->get('ant_photo');
+//             $title = array_key_exists('title',$data)? $data['title'] : null;
+            
+            $data  = $request->request->get('title');
+            $title = ($data != null) ? $data : null;
+            
             if($title == null){
                 return $this->createError('Photo title do not entity', '34', '400');
             }
