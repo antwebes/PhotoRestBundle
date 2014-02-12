@@ -43,7 +43,6 @@ abstract class PhotoManager implements PhotoManagerInterface
 			throw new \InvalidArgumentException("The path of photo does not exist and was not deleted");
 		}
 		$this->fileSystem->delete($path);
-
 	}
 	
 	public function createPhoto()

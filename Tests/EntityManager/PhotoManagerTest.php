@@ -28,7 +28,9 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 		}
 		
 		$this->repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+		
 		$metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+		
 		$this->fileSystem = $this->getMockBuilder('Gaufrette\Filesystem')
 			->disableOriginalConstructor()
 			->getMock();
@@ -97,9 +99,27 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 		$photo = $this->getPhoto();
 		$photo->setPath('unpath.jpg');
 
-		$this->fileSystem->expects($this->once())->method('delete')->with('original/unpath.jpg');
+		$this->fileSystem->expects($this->once())->method('delete')->with('unpath.jpg');
+		$this->fileSystem->expects($this->once())->method('has')->with('unpath.jpg')->will($this->returnValue(true));
 		$this->em->expects($this->once())->method('remove')->with($this->equalTo($photo));
 		$this->em->expects($this->once())->method('flush');
+	
+		$this->photoManager->deletePhoto($photo);
+	}
+	
+	/**
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testDeletePhotoWithPathIncorrect()
+	{
+		$photo = $this->getPhoto();
+		$photo->setPath('unpath.jpg');
+	
+		$this->fileSystem->expects($this->never())->method('delete');
+		$this->fileSystem->expects($this->once())->method('has')->with('unpath.jpg')->will($this->returnValue(false));
+		
+		$this->em->expects($this->never())->method('remove');
+		$this->em->expects($this->never())->method('flush');
 	
 		$this->photoManager->deletePhoto($photo);
 	}
