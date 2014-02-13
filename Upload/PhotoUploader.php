@@ -32,38 +32,70 @@ class PhotoUploader
         $filename = sprintf('%s/%s/%s/%s.%s', date('Y'), date('m'), date('d'), uniqid(), $file->getClientOriginalExtension());
 
         $adapter = $this->filesystem->getAdapter();
-        //Uploads to s3 with symfony & gaufrette
-        //http://braincrafted.com/symfony2-gaufrette-s3/
-		//$adapter->setMetadata($filename, array('contentType' => $file->getClientMimeType()));
+        $this->setMetadata($adapter, $filename, $file->getClientMimeType());
+		
+		
+        //podemos acceder al bucket usando: 
+        //$this->get('knp.gaufrette.filesystem_map')->get('amazon');
+        
         $adapter->write($filename, file_get_contents($file->getPathname()));
 
-        $this->generateThumbs($filename, $file->getClientOriginalExtension());
+        $this->generateThumbs($filename, $file->getClientOriginalExtension(), $adapter, $file->getClientMimeType());
 
         return $filename;
     }
 
-    private function generateThumbs($originalImageFile, $extension)
+    private function generateThumbs($originalImageFile, $extension, $adapter, $mimeType)
     {
         $baseName = substr($originalImageFile, 0, -(strlen($extension) + 1));
 
         foreach ($this->thumnailsSizes as $thumbnailName => $size) {
+        	
             $width = $size['width'];
             $height = $size['height'];
+            
             $thumbFilename = sprintf("%s_%s.%s", $baseName, $thumbnailName, $extension);
+            
             $image = $this->resizer->resize($originalImageFile, $width, $height, 'proportional');
+            
             $content = $image->get($extension);
+            
             $file = $this->filesystem->createFile($thumbFilename);
+            
+            $this->setMetadata($adapter, $thumbFilename, $mimeType);
+            
             $file->setContent($content);
         }
+        //delete the file original
         $this->filesystem->delete($originalImageFile);
+        
         //new original file
         $new_originalImageFile = sprintf("original/%s.%s", $baseName, $extension);
+        
         $image = $this->filesystem->read(sprintf("%s_%s.%s", $baseName, 'large', $extension));
         $file = $this->filesystem->createFile($new_originalImageFile);
+        
+        $this->setMetadata($adapter, $new_originalImageFile, $mimeType);
+        
         $file->setContent($image);
 
     }
 
+    /**
+     * 
+     * @param Adapter $adapter A configured Adapter instance of Gaufrette
+     * @param string $filename
+     * @param string $mimeType The type of the file as provided by PHP
+     * 
+     * I created this function to no repit the conditional if
+     */
+    private function setMetadata($adapter, $filename, $mimeType){
+    	if (method_exists($adapter,'setMetadata')) {
+    		$adapter->setMetadata($filename, array('contentType' => $mimeType));
+    	};
+    	
+    }
+    	
     private function isImage($file){
         if($info = @getimagesize($file)) {
             return true;
