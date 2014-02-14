@@ -9,6 +9,8 @@ use Ant\PhotoRestBundle\Model\ParticipantInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use JMS\Serializer\Annotation\Exclude;
+
 abstract class Photo implements PhotoInterface {
 	
 	/**
@@ -39,6 +41,7 @@ abstract class Photo implements PhotoInterface {
 	protected $publicatedAt;
 	/**
 	 * @ORM\Column(type="string")
+	 * @Exclude
 	 */
 	protected $path;
 	/**
