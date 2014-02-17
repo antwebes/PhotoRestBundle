@@ -27,12 +27,17 @@ class PhotoUploader
         if ((!in_array($file->getClientMimeType(), self::$allowedMimeTypes) && !in_array($file->getMimeType(), self::$allowedMimeTypes)) || !$this->isImage($file)) {
             throw new \InvalidArgumentException(sprintf('Files of ClientMimetype %s or MimeType are not allowed.', $file->getClientMimeType(), $file->getMimeType()));
         }
+        if (in_array($file->getMimeType(), self::$allowedMimeTypes)){
+        	$mimeType = $file->getMimeType();
+        }elseif (in_array($file->getClientMimeType(), self::$allowedMimeTypes)){
+        	$mimeType = $file->getClientMimeType();
+        }
 
         // Generate a unique filename based on the date and add file extension of the uploaded file
         $filename = sprintf('%s/%s/%s/%s.%s', date('Y'), date('m'), date('d'), uniqid(), $file->getClientOriginalExtension());
 
         $adapter = $this->filesystem->getAdapter();
-        $this->setMetadata($adapter, $filename, $file->getMimeType());
+        $this->setMetadata($adapter, $filename, $mimeType);
 		
 		
         //podemos acceder al bucket usando: 
@@ -40,7 +45,7 @@ class PhotoUploader
         
         $adapter->write($filename, file_get_contents($file->getPathname()));
 
-        $this->generateThumbs($filename, $file->getClientOriginalExtension(), $adapter, $file->getMimeType());
+        $this->generateThumbs($filename, $file->getClientOriginalExtension(), $adapter, $mimeType);
 
         return $filename;
     }
