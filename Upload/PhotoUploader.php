@@ -8,7 +8,7 @@ use Ant\ImageResizeBundle\Image\Resizer;
 
 class PhotoUploader
 {
-    private static $allowedMimeTypes = array('image/jpeg', 'image/png', 'image/gif', 'application/octet-stream');
+    private static $allowedMimeTypes = array('image/jpeg', 'image/png', 'image/gif');
 
     private $filesystem;
     private $resizer;
@@ -24,15 +24,15 @@ class PhotoUploader
     public function upload(UploadedFile $file)
     {
         // Check if the file's mime type is in the list of allowed mime types.
-        if (!in_array($file->getClientMimeType(), self::$allowedMimeTypes) && !$this->isImage($file)) {
-            throw new \InvalidArgumentException(sprintf('Files of type %s are not allowed.', $file->getClientMimeType()));
+        if ((!in_array($file->getClientMimeType(), self::$allowedMimeTypes) && !in_array($file->getMimeType(), self::$allowedMimeTypes)) || !$this->isImage($file)) {
+            throw new \InvalidArgumentException(sprintf('Files of ClientMimetype %s or MimeType are not allowed.', $file->getClientMimeType(), $file->getMimeType()));
         }
 
         // Generate a unique filename based on the date and add file extension of the uploaded file
         $filename = sprintf('%s/%s/%s/%s.%s', date('Y'), date('m'), date('d'), uniqid(), $file->getClientOriginalExtension());
 
         $adapter = $this->filesystem->getAdapter();
-        $this->setMetadata($adapter, $filename, $file->getClientMimeType());
+        $this->setMetadata($adapter, $filename, $file->getMimeType());
 		
 		
         //podemos acceder al bucket usando: 
@@ -40,7 +40,7 @@ class PhotoUploader
         
         $adapter->write($filename, file_get_contents($file->getPathname()));
 
-        $this->generateThumbs($filename, $file->getClientOriginalExtension(), $adapter, $file->getClientMimeType());
+        $this->generateThumbs($filename, $file->getClientOriginalExtension(), $adapter, $file->getMimeType());
 
         return $filename;
     }
