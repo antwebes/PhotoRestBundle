@@ -20,6 +20,8 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 	protected $repository;
 
 	protected $fileSystem;
+	
+	protected $event_dispatcher;
 
 	public function setUp()
 	{		
@@ -28,6 +30,8 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 		}
 		
 		$this->repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+		
+		$this->event_dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 		
 		$metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
 		
@@ -53,7 +57,7 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 			->method('getName')
 			->will($this->returnValue(static::PHOTO_CLASS));
 		
-		$this->photoManager = $this->createPhotoManager($this->fileSystem, $this->em, static::PHOTO_CLASS);
+		$this->photoManager = $this->createPhotoManager($this->fileSystem, $this->em, static::PHOTO_CLASS, $this->event_dispatcher);
 	}
 	
 	/**
@@ -76,9 +80,9 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 		return $participant;
 	}
 	
-	protected function createPhotoManager($fileSystem, $em, $photoClass)
+	protected function createPhotoManager($fileSystem, $em, $photoClass, $event_dispatcher)
 	{
-		return new PhotoManager($fileSystem, $em, $photoClass);	
+		return new PhotoManager($fileSystem, $em, $photoClass, $event_dispatcher);	
 	}
 	
 	public function testGetClass()

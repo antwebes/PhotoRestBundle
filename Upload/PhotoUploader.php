@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace Ant\PhotoRestBundle\Upload;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;

@@ -8,11 +8,29 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
 
 use Ant\PhotoRestBundle\Event\AntPhotoRestEvents;
+use Ant\PhotoRestBundle\EntityManager\PhotoManager;
 use Ant\PhotoRestBundle\Event\PhotoEvent;
 
+/**
+ * @deprecated esto no debe ir en el vendor, borrar las miniaturas es propio de cada proyecto
+ * @author pc
+ *
+ */
 class Listener implements EventSubscriberInterface
 {
 	protected $root_dir;
+	
+	protected $photoManager;
+	
+	/**
+	 * Constructor.
+	 *
+	 * @param EntityManager\photoManager 
+	 */
+	public function __construct(PhotoManager $photoManager)
+	{
+		$this->photoManager = $photoManager;
+	}
 	
     static public function getSubscribedEvents()
     {
@@ -28,6 +46,7 @@ class Listener implements EventSubscriberInterface
 	/**
 	 * the photo has been deleted, now you have to delete the file of image
 	 * @param AntPhotoRestEvent $event
+	 * @deprecated
 	 */
     public function photoDeleted(PhotoEvent $event)
     {
@@ -37,7 +56,6 @@ class Listener implements EventSubscriberInterface
 		if(file_exists($pathAbsolute)){
 			unlink($pathAbsolute);
 		}
-		
     }
 
 }
