@@ -238,10 +238,7 @@ class PhotoController extends BaseRestController
 			$photo = $photoManager->deletePhoto($photo);
 		}catch (\InvalidArgumentException $e) {
 			return $this->buildView($e->getMessage(), 400);
-		}	
-
-		$dispatcher = $this->container->get('event_dispatcher');
-		$dispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($path));
+		}
 		
 		return $this->buildView('Photo deleted', 200);
 		

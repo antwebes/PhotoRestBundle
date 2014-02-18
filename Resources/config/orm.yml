@@ -8,7 +8,7 @@ parameters:
 services:
     ant.photo_rest.entity_manager.photo_manager:
         class: %ant.photo_rest.entity_manager.photo_manager.class%
-        arguments: [@image_adapter_fs, @doctrine.orm.entity_manager, %ant.photo_rest.model.photo.class%]
+        arguments: [@image_adapter_fs, @doctrine.orm.entity_manager, %ant.photo_rest.model.photo.class%, @event_dispatcher ]
     ant.photo_rest.manager.vote_manager:
         class: %ant.photo_rest.entity_manager.vote_manager.class%
         arguments: [@ant.photo_rest.entity_manager.photo_manager, @doctrine.orm.entity_manager , %ant.photo_rest.model.vote.class%]

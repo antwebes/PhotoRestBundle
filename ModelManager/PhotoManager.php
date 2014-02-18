@@ -2,9 +2,13 @@
 
 namespace Ant\PhotoRestBundle\ModelManager;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Ant\PhotoRestBundle\Model\ParticipantInterface;
 use Ant\PhotoRestBundle\Model\PhotoInterface;
 use Ant\PhotoRestBundle\Model\AlbumInterface;
+use Ant\PhotoRestBundle\Event\AntPhotoRestEvents;
+use Ant\PhotoRestBundle\Event\PhotoEvent;
 
 use Gaufrette\Filesystem;
 
@@ -20,10 +24,13 @@ abstract class PhotoManager implements PhotoManagerInterface
 	 * @var Filesystem
 	 */
 	protected $fileSystem;
+	
+	protected $eventDispatcher;
 
-	public function __construct(Filesystem $fileSystem)
+	public function __construct(Filesystem $fileSystem, EventDispatcherInterface $eventDispatcher)
 	{
 		$this->fileSystem = $fileSystem;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	public function savePhoto(PhotoInterface $photo)
@@ -33,8 +40,14 @@ abstract class PhotoManager implements PhotoManagerInterface
 	
 	public function deletePhoto(PhotoInterface $photo)
 	{
-		$this->deleteFile($photo->getPath());
-		$this->doDeletePhoto($photo);
+		try{
+			$this->deleteFile($photo->getPath());
+			$this->doDeletePhoto($photo);
+			$this->eventDispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($photo->getPath()));
+		}catch(\InvalidArgumentException $e){
+			throw new \InvalidArgumentException($e->getMessage());
+		}
+		
 	}
 
 	public function deleteFile($path)

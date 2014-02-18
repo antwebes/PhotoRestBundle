@@ -2,12 +2,15 @@
 
 namespace Ant\PhotoRestBundle\EntityManager;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Ant\PhotoRestBundle\Model\ParticipantInterface;
+use Ant\PhotoRestBundle\Model\PhotoInterface;
+use Ant\PhotoRestBundle\ModelManager\PhotoManager as BasePhotoManager;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Ant\PhotoRestBundle\ModelManager\PhotoManager as BasePhotoManager;
-use Ant\PhotoRestBundle\Model\PhotoInterface;
+
 use Gaufrette\Filesystem;
 
 class PhotoManager extends BasePhotoManager
@@ -34,9 +37,9 @@ class PhotoManager extends BasePhotoManager
 	 * @param \Doctrine\ORM\EntityManager                  $em
 	 * @param string                                       $class
 	 */
-	public function __construct(Filesystem $fileSystem, EntityManager $em, $class)
+	public function __construct(Filesystem $fileSystem, EntityManager $em, $class, EventDispatcherInterface $event_dispatcher)
 	{
-		parent::__construct($fileSystem);
+		parent::__construct($fileSystem, $event_dispatcher);
 
 		$this->em = $em;
 		$this->repository = $em->getRepository($class);
