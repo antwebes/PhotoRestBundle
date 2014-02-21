@@ -2,6 +2,10 @@
 
 namespace Ant\PhotoRestBundle\Controller;
 
+use Ant\PhotoRestBundle\EntityManager\PhotoManager;
+
+use Ant\PhotoRestBundle\Model\PhotoInterface;
+
 use Imagine\Exception\InvalidArgumentException;
 
 use Chatea\UtilBundle\Controller\BaseRestController;
@@ -99,10 +103,15 @@ class PhotoController extends BaseRestController
      *     }
      *  )
      *  @ParamConverter("photo", class="FotoBundle:Photo", options={"error" = "photo.entity.unable_find", "id" = "photo_id"})
-
      */
     public function updateAction(Photo $photo,  Request $request)
     {
+    	$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
+    	
+    	if ($this->isOwnerPhoto($photo, $photoManager)){
+    		return $this->createError('This user has no permission for this action', '32', '403');
+    	}
+    	
         if ('PATCH' === $request->getMethod()){
 //             $data  = $request->request->get('ant_photo');
 //             $title = array_key_exists('title',$data)? $data['title'] : null;
@@ -116,7 +125,7 @@ class PhotoController extends BaseRestController
             try{
                 $photo->setTitle($title);
 
-                $photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
+                
                 $photoManager->update($photo);
             }catch(BadRequestHttpException $e){
                 return $this->serviceError($e->getMessage(), '400');
@@ -224,13 +233,10 @@ class PhotoController extends BaseRestController
 		if (null === $photo) {
 			return $this->createError('Unable to find Photo entity', '42', '404');
 		}
-		
-		$securityContext = $this->container->get('security.context');
-		
-		$user = $securityContext->getToken()->getUser();
-		//if user is not owner or has not Role Admin or application
-		if ( !($photoManager->isOwner($user, $photo) or $securityContext->isGranted(array(new Expression('hasRole("ROLE_ADMIN") or hasRole("ROLE_APPLICATION")')))))
+		 
+		if ($this->isOwnerPhoto($photo, $photoManager)){
 			return $this->createError('This user has no permission for this action', '32', '403');
+		}
 				
 		$path = $photo->getPath();
 		
@@ -325,5 +331,20 @@ class PhotoController extends BaseRestController
 	protected function getPhotoUploader()
 	{
 		return $this->get('ant.photo_rest.upload.photo_uploader');
+	}
+	
+	/**
+	 * verifies that the user is the owner of the photo
+	 * @param PhotoInterface $photo
+	 * @return \Chatea\UtilBundle\Controller\Response
+	 */
+	private function isOwnerPhoto(PhotoInterface $photo, PhotoManager $photoManager)
+	{
+		$securityContext = $this->container->get('security.context');
+		 
+		$user = $securityContext->getToken()->getUser();
+		//if user is not owner or has not Role Admin or application
+		return !($photoManager->isOwner($user, $photo) or $securityContext->isGranted(array(new Expression('hasRole("ROLE_ADMIN") or hasRole("ROLE_APPLICATION")'))));
+			
 	}
 }

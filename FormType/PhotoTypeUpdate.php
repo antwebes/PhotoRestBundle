@@ -47,6 +47,6 @@ class PhotoTypeUpdate extends AbstractType
 
     public function getName()
     {
-        return "ant_photo";
+        return "";
     }
 }
