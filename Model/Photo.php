@@ -56,7 +56,7 @@ abstract class Photo implements PhotoInterface {
 	 *
 	 * @var File $image
 	 */
-	public $image;
+	protected $image;
 	/**
 	 * number of voter to this photo
 	 * @var int
