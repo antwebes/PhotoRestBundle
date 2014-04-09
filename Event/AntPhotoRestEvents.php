@@ -14,6 +14,14 @@ final class AntPhotoRestEvents
      * @var string
      */
     const PHOTO_DELETED = 'ant_photo_rest.photo_deleted';
+    
+    /**
+     * The PHOTO_SHOW_COMPLETED event occurs after to recuperato a photo and before that send response
+     * The event listener method receives a Ant\PhotoRestBundle\Event\PhotoEvent
+     *
+     * @var string
+     */
+    const PHOTO_SHOW_COMPLETED = 'ant_photo_rest.photo.show.completed';
    
 
 }
