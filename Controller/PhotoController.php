@@ -2,9 +2,16 @@
 
 namespace Ant\PhotoRestBundle\Controller;
 
+use Ant\PhotoRestBundle\Entity\Photo;
 use Ant\PhotoRestBundle\EntityManager\PhotoManager;
 
 use Ant\PhotoRestBundle\Model\PhotoInterface;
+use Ant\PhotoRestBundle\Model\ParticipantInterface;
+
+use Ant\PhotoRestBundle\Event\AntPhotoRestEvents;
+use Ant\PhotoRestBundle\Event\PhotosUserResponseEvent;
+use Ant\PhotoRestBundle\Event\PhotoEvent;
+use Ant\PhotoRestBundle\Event\PhotoResponseEvent;
 
 use Imagine\Exception\InvalidArgumentException;
 
@@ -12,18 +19,12 @@ use Chatea\UtilBundle\Controller\BaseRestController;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use Ant\PhotoRestBundle\Entity\Photo;
-use Ant\PhotoRestBundle\Event\AntPhotoRestEvents;
-use Ant\PhotoRestBundle\Event\PhotoEvent;
-
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use JMS\SecurityExtraBundle\Annotation\SecureParam;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
-use Ant\PhotoRestBundle\Model\ParticipantInterface;
 
 use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 
@@ -145,16 +146,24 @@ class PhotoController extends BaseRestController
 	 *     }
 	 *  )
 	 */
-	public function showAction($id)
+	public function showAction(Request $request, $id)
 	{
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$photo = $photoManager->findPhotoById($id);
 		
 		if (null === $photo) {
+			
 			return $this->createError('Unable to find Photo entity', '42', '404');
 		}
-		return $this->buildResourceView($photo, 200, 'photo_show');
 		
+		$response = $this->buildResourceView($photo, 200, 'photo_show');
+		
+		/** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+		$dispatcher = $this->container->get('event_dispatcher');
+		
+		$dispatcher->dispatch(AntPhotoRestEvents::PHOTO_SHOW_COMPLETED, new PhotoResponseEvent($photo, $request, $response));
+		
+		return $response;
 	}
 
 	/**
@@ -170,7 +179,7 @@ class PhotoController extends BaseRestController
 	 * @QueryParam(name="limit", description="Max number of records to be returned")
      * @QueryParam(name="offset", description="Number of records to skip")
 	 */
-	public function photosUserAction($id)
+	public function photosUserAction(Request $request, $id)
 	{
 		$participantManager = $this->get('ant.photo_rest.manager.participant_manager');
 		$participant = $participantManager->findParticipantById($id);
@@ -183,7 +192,11 @@ class PhotoController extends BaseRestController
 		$entities = $photoManager->findAllMePhotos($participant);
 		
 		$linkOverrides = array('route' => 'ant_photo_rest_show_user_all', 'parameters' => array('id'), 'rel' => 'self', 'entity' => $participant);
-		return $this->buildPagedResourcesView($entities, 'Ant\PhotoBundle\Entity\Photo' , 200, 'photo_list', array('id'=>'id'),$linkOverrides);
+		$response = $this->buildPagedResourcesView($entities, 'Ant\PhotoBundle\Entity\Photo' , 200, 'photo_list', array('id'=>'id'),$linkOverrides);
+		
+		$this->getEventDispatcher()->dispatch(AntPhotoRestEvents::PHOTO_PHOTOS_USER_COMPLETED, new PhotosUserResponseEvent($entities, $request, $response));
+		
+		return $response;
 	}
 	/**
 	 * List all Photo entities of an album
@@ -346,5 +359,11 @@ class PhotoController extends BaseRestController
 		//if user is not owner or has not Role Admin or application
 		return !($photoManager->isOwner($user, $photo) or $securityContext->isGranted(array(new Expression('hasRole("ROLE_ADMIN") or hasRole("ROLE_APPLICATION")'))));
 			
+	}
+	
+	protected function getEventDispatcher()
+	{
+		/** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+		return $this->container->get('event_dispatcher');
 	}
 }
