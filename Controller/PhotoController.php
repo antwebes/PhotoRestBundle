@@ -158,10 +158,7 @@ class PhotoController extends BaseRestController
 		
 		$response = $this->buildResourceView($photo, 200, 'photo_show');
 		
-		/** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
-		$dispatcher = $this->container->get('event_dispatcher');
-		
-		$dispatcher->dispatch(AntPhotoRestEvents::PHOTO_SHOW_COMPLETED, new PhotoResponseEvent($photo, $request, $response));
+		$this->getEventDispatcher()->dispatch(AntPhotoRestEvents::PHOTO_SHOW_COMPLETED, new PhotoResponseEvent($photo, $request, $response));
 		
 		return $response;
 	}
