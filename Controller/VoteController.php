@@ -62,7 +62,7 @@ class VoteController extends BaseRestController
 		$form = $this->get('ant.photo_rest.form_factory.vote.default')->createForm();
 		$form->setData($vote);
 		
-		$form->bind($dataRequest);
+		$form->submit($dataRequest);
 		
 		if ($form->isValid()) {
 						

@@ -47,7 +47,7 @@ class AlbumController extends BaseRestController
 		$form = $this->get('ant.photo_rest.form_factory.album.default')->createForm();
 		$form->setData($album);
 		
-		$form->bind($request);
+		$form->submit($request);
 		
 		if ($form->isValid()) {
 			
