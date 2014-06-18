@@ -14,12 +14,14 @@ class PhotoUploader
     private $filesystem;
     private $resizer;
     private $thumnailsSizes;
+    private $cacheControl;
 
-    public function __construct(Filesystem $filesystem, Resizer $resizer, $thumnailsSizes)
+    public function __construct(Filesystem $filesystem, Resizer $resizer, $thumnailsSizes, $cacheControl)
     {
         $this->filesystem = $filesystem;
         $this->resizer = $resizer;
         $this->thumnailsSizes = $thumnailsSizes;
+        $this->cacheControl = $cacheControl;
     }
 
     public function upload(UploadedFile $file)
@@ -97,7 +99,11 @@ class PhotoUploader
      */
     private function setMetadata($adapter, $filename, $mimeType){
     	if (method_exists($adapter,'setMetadata')) {
-    		$adapter->setMetadata($filename, array('contentType' => $mimeType));
+    		$adapter->setMetadata($filename, array(
+    				'contentType' => $mimeType,
+    				'headers' => array('Cache-Control' => $this->cacheControl)
+    				)
+    			);
     	};
     	
     }

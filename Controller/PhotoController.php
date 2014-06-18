@@ -10,7 +10,6 @@ use Ant\PhotoRestBundle\Model\ParticipantInterface;
 
 use Ant\PhotoRestBundle\Event\AntPhotoRestEvents;
 use Ant\PhotoRestBundle\Event\PhotosUserResponseEvent;
-use Ant\PhotoRestBundle\Event\PhotoEvent;
 use Ant\PhotoRestBundle\Event\PhotoResponseEvent;
 
 use Imagine\Exception\InvalidArgumentException;
@@ -25,8 +24,6 @@ use JMS\SecurityExtraBundle\Annotation\SecureParam;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
-use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 

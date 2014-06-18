@@ -39,6 +39,9 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                    ->children()
+                    	->scalarNode('cache_control')->defaultValue('max-age=360000')->cannotBeEmpty()->end()
+                    ->end()
                 ->end()
         	;
 

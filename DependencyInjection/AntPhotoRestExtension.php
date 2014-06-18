@@ -44,6 +44,7 @@ class AntPhotoRestExtension extends Extension
         //change this for you hostmame or s3 server
         //$container->setParameter('ant.photo_rest.model.server_base_url', $config['server_base_url']);
         $container->setParameter('ant.photo_rest.upload.thumbnails', $config['upload']['thumbnails']);
+        $container->setParameter('ant.photo_rest.upload.cache_control', $config['upload']['cache_control']);
 
 //         $container->setParameter('ant_badge.badge_class', $config['badge_class']);
 //         $container->setParameter('ant_badge.rank_class', $config['rank_class']);
