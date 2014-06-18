@@ -75,6 +75,10 @@ class PhotoController extends BaseRestController
 					return $this->serviceError('photo_rest.file.not_found', '404');
 				}
 
+                if(empty($image->getClientOriginalExtension())){
+                    return $this->serviceError('foto-rest.form.image_extension',400);
+                }
+
 				$url = $this->getPhotoUploader()->upload($image);
 				$photo->setPath($url);
 				$photoManager->savePhoto($photo);
