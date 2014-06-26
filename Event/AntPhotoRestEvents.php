@@ -8,7 +8,15 @@ namespace Ant\PhotoRestBundle\Event;
 final class AntPhotoRestEvents
 {
     /**
-     * The PHOTO_DELETED event occurs after an user deleted a file of bd
+     * The PHOTO_PRE_DELETE event occurs before an user deleted a photo of bd
+     * The event is an instance of Ant\PhotoRestBundle\Event\PhotoEvent
+     *
+     * @var string
+     */
+    const PHOTO_PRE_DELETE = 'ant_photo_rest.photo_pre_delete';
+
+    /**
+     * The PHOTO_DELETED event occurs after an user deleted a photo of bd
      * The event is an instance of Ant\PhotoRestBundle\Event\PhotoEvent
      *
      * @var string

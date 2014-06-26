@@ -8,11 +8,11 @@ use Symfony\Component\EventDispatcher\Event;
 class PhotoEvent extends Event
 {
     
-    private $path;
+    private $photo;
 
-    public function __construct($path)
+    public function __construct($photo)
     {
-    	$this->path = $path;
+    	$this->photo = $photo;
     }
 
     /**
@@ -20,8 +20,8 @@ class PhotoEvent extends Event
      *
      * @return string
      */
-    public function getPath()
+    public function getPhoto()
     {
-    	return $this->path;
+    	return $this->photo;
     }
 }

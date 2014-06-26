@@ -69,6 +69,12 @@ abstract class Album extends BaseAlbum
 		$this->photos->add($photo);
 		$photo->setAlbum($this);
 	}
+
+	public function removePhoto(PhotoInterface $photo)
+	{
+		$this->photos->removeElement($photo);
+		$photo->setAlbum(null);
+	}
 	
 	public function getPhotos()
 	{
