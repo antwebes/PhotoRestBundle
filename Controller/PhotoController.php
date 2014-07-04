@@ -59,9 +59,8 @@ class PhotoController extends BaseRestController
 		$form = $this->get('ant.photo_rest.form_factory.photo.default')->createForm();
 		$form->setData($photo);
 
-                $children = $form->all();
-                $dataRequest = array_intersect_key($dataRequest, $children);
-
+        $children = $form->all();
+        $dataRequest = array_intersect_key($dataRequest, $children);
 
 		if ($request->isMethod('POST')) {
 
