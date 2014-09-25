@@ -5,6 +5,7 @@ namespace Ant\PhotoRestBundle\Controller;
 use Ant\PhotoRestBundle\Entity\Photo;
 use Ant\PhotoRestBundle\EntityManager\PhotoManager;
 
+use Ant\PhotoRestBundle\Event\PhotoEvent;
 use Ant\PhotoRestBundle\Model\PhotoInterface;
 use Ant\PhotoRestBundle\Model\ParticipantInterface;
 
@@ -68,6 +69,7 @@ class PhotoController extends BaseRestController
 
 			if ($form->isValid()) {
 				$photo->setParticipant($user);
+                ldd($user);
 				if ($request->files->get('image')){
 					$image = $request->files->get('image');
 				} else {
@@ -85,6 +87,7 @@ class PhotoController extends BaseRestController
 				$url = $this->getPhotoUploader()->upload($image);
 				$photo->setPath($url);
 				$photoManager->savePhoto($photo);
+                $this->getEventDispatcher()->dispatch(AntPhotoRestEvents::PHOTO_CREATED_COMPLETED, new PhotoEvent($photo));
 				return $this->buildResourceView($photo, 200, 'photo_show');
 			}
 			return $this->buildFormErrorsView($form);
@@ -361,7 +364,10 @@ class PhotoController extends BaseRestController
 		return !($photoManager->isOwner($user, $photo) or $securityContext->isGranted(array(new Expression('hasRole("ROLE_ADMIN") or hasRole("ROLE_APPLICATION")'))));
 			
 	}
-	
+
+    /**
+     * @return \Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher
+     */
 	protected function getEventDispatcher()
 	{
 		/** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */

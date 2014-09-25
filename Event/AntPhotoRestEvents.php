@@ -38,6 +38,13 @@ final class AntPhotoRestEvents
      * @var string
      */
     const PHOTO_PHOTOS_USER_COMPLETED = 'ant_photo_rest.photo.photos_user.completed';
-   
+
+    /**
+     * The PHOTO_CREATED_COMPLETED event occurs after one photo is created .
+     * The event is one instance of PhotoEvent
+     *
+     * @var string
+     */
+    const PHOTO_CREATED_COMPLETED       = 'ant_photo_rest.photo.created.completed';
 
 }
