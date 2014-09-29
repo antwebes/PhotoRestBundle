@@ -69,7 +69,6 @@ class PhotoController extends BaseRestController
 
 			if ($form->isValid()) {
 				$photo->setParticipant($user);
-                ldd($user);
 				if ($request->files->get('image')){
 					$image = $request->files->get('image');
 				} else {
