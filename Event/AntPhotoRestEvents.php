@@ -40,6 +40,14 @@ final class AntPhotoRestEvents
     const PHOTO_PHOTOS_USER_COMPLETED = 'ant_photo_rest.photo.photos_user.completed';
 
     /**
+     * The PHOTO_CREATED_INITIALIZE event occurs before the form is created .
+     * The event is one instance of UserEvent
+     *
+     * @var string
+     */
+    const PHOTO_CREATED_INITIALIZE       = 'ant_photo_rest.photo.created.initialize';
+    
+    /**
      * The PHOTO_CREATED_COMPLETED event occurs after one photo is created .
      * The event is one instance of PhotoEvent
      *
