@@ -57,6 +57,9 @@ class PhotoController extends BaseRestController
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
 		$photo = $photoManager->createPhoto();
 
+		$event = new UserEvent($user);
+		$this->getEventDispatcher()->dispatch(AntPhotoRestEvents::PHOTO_CREATED_INITIALIZE, $event);
+		
 		$form = $this->get('ant.photo_rest.form_factory.photo.default')->createForm();
 		$form->setData($photo);
 
