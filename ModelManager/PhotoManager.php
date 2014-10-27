@@ -40,24 +40,22 @@ abstract class PhotoManager implements PhotoManagerInterface
 	
 	public function deletePhoto(PhotoInterface $photo)
 	{
-		try{
-			$this->deleteFile($photo->getPath());
-			$this->doDeletePhoto($photo);
-			$this->eventDispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($photo->getPath()));
-		}catch(\InvalidArgumentException $e){
-			throw new \InvalidArgumentException($e->getMessage());
-		}
-		
+        $this->deleteFile($photo->getPath());
+        $this->doDeletePhoto($photo);
+        $this->eventDispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($photo->getPath()));
+
 	}
 
 	public function deleteFile($path)
 	{
-		if (!$this->fileSystem->has($path)){
-			throw new \InvalidArgumentException("The path of photo does not exist and was not deleted");
-		}
-		$this->fileSystem->delete($path);
+        if($this->fileSystem->has($path)){
+            $this->fileSystem->delete($path);
+        }
 	}
-	
+
+    /**
+     * @return PhotoInterface
+     */
 	public function createPhoto()
 	{
 		$class = $this->getClass();
@@ -75,16 +73,19 @@ abstract class PhotoManager implements PhotoManagerInterface
 	}
 	/**
 	 * get all photos of an user
-	 */
+     * @param ParticipantInterface $participant
+     * @return PhotoInterface|null
+     */
 	public function findAllMePhotos(ParticipantInterface $participant)
 	{
 		return $this->findPhotoBy(array('participant' => $participant));
 	}
-	/**
-	 * calculate the new score of a photo with the new vote
-	 * @param PhotoInterface $photo
-	 * @param integer $newPhoto
-	 */
+    /**
+     * Calculate the new score of a photo with the new vote
+     * @param PhotoInterface $photo
+     * @param $newVote
+     * @param $operator
+     */
 	public function updateScore(PhotoInterface $photo, $newVote, $operator)
 	{
 		$scoreOld = $photo->getScore();
@@ -107,20 +108,32 @@ abstract class PhotoManager implements PhotoManagerInterface
 		
 		$this->doSavePhoto($photo);
 	}
-	
+
+    /**
+     * @param ParticipantInterface $user
+     * @param PhotoInterface $photo
+     * @return bool
+     */
 	public function isOwner(ParticipantInterface $user, PhotoInterface $photo)
 	{
 		return ($user->getId() == $photo->getParticipant()->getId());
 	}
-	
+
+    /**
+     * @param PhotoInterface $photo
+     * @param AlbumInterface $album
+     */
 	public function insertToAlbum(PhotoInterface $photo, AlbumInterface $album)
 	{
-// 		$photo->setAlbum($album);
 		$album->addPhoto($photo);
 		
 		$this->doSavePhoto($photo);		
 	}
-	
+
+    /**
+     * @param PhotoInterface $photo
+     * @param AlbumInterface $album
+     */
 	public function deleteOfAlbum(PhotoInterface $photo, AlbumInterface $album)
 	{
 		$album->getPhotos()->removeElement($photo);
