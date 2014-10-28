@@ -12,6 +12,7 @@ use Ant\PhotoRestBundle\Model\ParticipantInterface;
 use Ant\PhotoRestBundle\Event\AntPhotoRestEvents;
 use Ant\PhotoRestBundle\Event\PhotosUserResponseEvent;
 use Ant\PhotoRestBundle\Event\PhotoResponseEvent;
+use Ant\PhotoRestBundle\Event\UserEvent
 
 use Imagine\Exception\InvalidArgumentException;
 
