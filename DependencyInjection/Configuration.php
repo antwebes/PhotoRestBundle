@@ -43,6 +43,13 @@ class Configuration implements ConfigurationInterface
                     	->scalarNode('cache_control')->defaultValue('max-age=360000')->cannotBeEmpty()->end()
                     ->end()
                 ->end()
+                ->arrayNode('entity_manager')
+	                ->addDefaultsIfNotSet()
+						->children()
+							->scalarNode('photo')->defaultValue('ant.photo_rest.entity_manager.photo_manager.default')->end()
+						->end()
+					->end()
+                ->end()
         	;
 
         // Here you should define the parameters that are allowed to

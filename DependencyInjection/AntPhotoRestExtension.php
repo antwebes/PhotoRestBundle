@@ -45,6 +45,8 @@ class AntPhotoRestExtension extends Extension
         //$container->setParameter('ant.photo_rest.model.server_base_url', $config['server_base_url']);
         $container->setParameter('ant.photo_rest.upload.thumbnails', $config['upload']['thumbnails']);
         $container->setParameter('ant.photo_rest.upload.cache_control', $config['upload']['cache_control']);
+        
+        $container->setAlias('ant.photo_rest.entity_manager.photo_manager', $config['entity_manager']['photo']);
 
 //         $container->setParameter('ant_badge.badge_class', $config['badge_class']);
 //         $container->setParameter('ant_badge.rank_class', $config['rank_class']);
