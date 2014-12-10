@@ -40,6 +40,7 @@ abstract class PhotoManager implements PhotoManagerInterface
 	
 	public function deletePhoto(PhotoInterface $photo)
 	{
+		$this->eventDispatcher->dispatch(AntPhotoRestEvents::PHOTO_PRE_DELETE, new PhotoEvent($photo));
         $this->deleteFile($photo->getPath());
         $this->doDeletePhoto($photo);
         $this->eventDispatcher->dispatch(AntPhotoRestEvents::PHOTO_DELETED, new PhotoEvent($photo->getPath()));
