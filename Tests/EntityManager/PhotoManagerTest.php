@@ -112,7 +112,8 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 	}
 	
 	/**
-	 * @expectedException InvalidArgumentException
+	 * Now the repository is called although the image is removed already, so dont must return (@expectedException InvalidArgumentException)
+	 * If the image is not in amazon s3, we remove of database.
 	 */
 	public function testDeletePhotoWithPathIncorrect()
 	{
@@ -122,8 +123,8 @@ class PhotoManagerTest extends \PHPUnit_Framework_TestCase
 		$this->fileSystem->expects($this->never())->method('delete');
 		$this->fileSystem->expects($this->once())->method('has')->with('unpath.jpg')->will($this->returnValue(false));
 		
-		$this->em->expects($this->never())->method('remove');
-		$this->em->expects($this->never())->method('flush');
+		$this->em->expects($this->once())->method('remove');
+		$this->em->expects($this->once())->method('flush');
 	
 		$this->photoManager->deletePhoto($photo);
 	}

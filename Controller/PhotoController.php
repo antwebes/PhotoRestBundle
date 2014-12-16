@@ -29,6 +29,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 
+use Imagine\Exception\InvalidArgumentException as  ImagineInvalidArgumentException;
+
 /**
  * Foto controller.
  *
@@ -82,14 +84,15 @@ class PhotoController extends BaseRestController
 				if (!isset($image)){
 					return $this->serviceError('photo_rest.file.not_found', '404');
 				}
-
-                if(empty($image->getClientOriginalExtension())){
-                    return $this->serviceError('foto-rest.form.image_extension',400);
-                }
-
-				$url = $this->getPhotoUploader()->upload($image);
-				$photo->setPath($url);
-				$photoManager->savePhoto($photo);
+                
+                try{
+					$url = $this->getPhotoUploader()->upload($image);
+					$photo->setPath($url);
+					$photoManager->savePhoto($photo);
+				}catch (ImagineInvalidArgumentException $e){
+					return $this->createError($e->getMessage(),40,400);
+				}
+				
                 $this->getEventDispatcher()->dispatch(AntPhotoRestEvents::PHOTO_CREATED_COMPLETED, new PhotoEvent($photo));
 				return $this->buildResourceView($photo, 200, 'photo_show');
 			}
