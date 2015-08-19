@@ -38,6 +38,12 @@ class VoteController extends BaseRestController
 	 */
 	public function createAction(ParticipantInterface $user, Request $request)
 	{
+		$sessionUser = $this->getUser();
+
+        if($sessionUser != null && $sessionUser->getId() != $user->getId()){
+            return $this->createError('You can not vote for other user', '32', '403');
+        }
+
 		$dataRequest = $request->request->get('vote');
 		//get id of photo from request
 		$photoId = $dataRequest['photo']; 
