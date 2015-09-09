@@ -27,7 +27,7 @@ services:
         
     ant.photo_rest.form_type.vote.default:
         class: %ant.photo_rest.form_type.vote.class%
-        arguments: [%ant.photo_rest.model.vote.class%]
+        arguments: [%ant.photo_rest.model.vote.class%, @ant.photo_rest.entity_manager.photo_manager]
         tags:
             - { name: form.type , alias: %ant.photo_rest.vote.form_name% }
             

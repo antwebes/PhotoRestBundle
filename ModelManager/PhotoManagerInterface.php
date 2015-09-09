@@ -14,5 +14,10 @@ interface PhotoManagerInterface
 	public function createPhoto();
 	
 	public function deletePhoto(PhotoInterface $photo);
-	
+
+    /**
+     * @param string $id
+     * @return PhotoInterface
+     */
+    public function findPhotoById($id);
 }
