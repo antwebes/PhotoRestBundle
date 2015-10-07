@@ -75,4 +75,28 @@ abstract class VoteManager
 	{
 		return ($photoId->getParticipant() == $user);
 	}
+	
+	/**
+	 * Number of votes created in a date range, grouped by day
+	 *
+	 * @param string $dateTimeInit the date init
+	 * @param string $dateTimeEnd the date end
+	 * @return array | null
+	 */
+	public function countVotesCreatedBetweenDatesGroupByDates(\DateTime $dateTimeInit, \DateTime $dateTimeEnd)
+	{
+		return $this->countVotesCreatedBetweenDatesGroupByDates($dateTimeInit, $dateTimeEnd);
+	}
+	
+	/**
+	 * Number of votes created in a date range, in a date range, grouped by weeks
+	 *
+	 * @param string $dateTimeInit the date init
+	 * @param string $dateTimeEnd the date end
+	 * @return array | null
+	 */
+	public function countVotesCreatedBetweenDatesGroupByWeeks(\DateTime $dateTimeInit, \DateTime $dateTimeEnd)
+	{
+		return $this->countVotesCreatedBetweenDatesGroupByWeeks($dateTimeInit, $dateTimeEnd);
+	}
 }

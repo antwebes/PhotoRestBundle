@@ -10,6 +10,8 @@ use Ant\PhotoRestBundle\Model\ParticipantInterface;
 
 class VoteManager extends BaseVoteManager
 {
+	const DATE_FORMAT = 'Y-m-d H:i:s';
+	
 	/**
 	 * @var Entity\PhotoManager
 	 */
@@ -100,6 +102,60 @@ class VoteManager extends BaseVoteManager
 		return new Paginator($query, false);
 		
 	}
+	
+	
+	/**
+	 * Number of votes created in a date range, grouped by day
+	 *
+	 * @param string $dateTimeInit the date init
+	 * @param string $dateTimeEnd the date end
+	 * @return array | null
+	 */
+	public function countVotesCreatedBetweenDatesGroupByDates(\DateTime $dateTimeInit, \DateTime $dateTimeEnd)
+	{
+		$queryBuilder = $this->em->createQueryBuilder();
+		$queryBuilder->select('DATE(v.publicatedAt) AS DateCreatedAt, COUNT(v.publicatedAt) AS Votes, COUNT(DISTINCT v.participant) AS Users')
+		->from('FotoBundle:Vote','v')
+		->where($queryBuilder->expr()->between('v.publicatedAt', ':dateTimeInit', ':dateTimeEnd'))
+		->addGroupBy('DateCreatedAt')
+		->addOrderBy('DateCreatedAt');
+	
+	
+		$queryBuilder->setParameter('dateTimeInit',$dateTimeInit->format(self::DATE_FORMAT));
+		$queryBuilder->setParameter('dateTimeEnd',$dateTimeEnd->format(self::DATE_FORMAT));
+	
+		$result = $queryBuilder->getQuery()->getScalarResult();
+	
+		return $result;
+	}
+	
+	/**
+	 * Number of votes created in a date range, in a date range, grouped by weeks
+	 *
+	 * @param string $dateTimeInit the date init
+	 * @param string $dateTimeEnd the date end
+	 * @return array | null
+	 */
+	public function countVotesCreatedBetweenDatesGroupByWeeks(\DateTime $dateTimeInit, \DateTime $dateTimeEnd)
+	{
+		$queryBuilder = $this->em->createQueryBuilder();
+		$queryBuilder->select('YEAR(v.publicatedAt) AS YEAR, WEEK(v.publicatedAt) AS WEEK, COUNT(v.publicatedAt) AS Votes , COUNT(DISTINCT v.participant) AS Users')
+		->from('FotoBundle:Vote','v')
+		->where($queryBuilder->expr()->between('v.publicatedAt', ':dateTimeInit', ':dateTimeEnd'))
+		->groupBy('YEAR')
+		->addGroupBy('WEEK')
+		->OrderBy('YEAR','DESC')
+		->addOrderBy('WEEK');
+	
+	
+		$queryBuilder->setParameter('dateTimeInit',$dateTimeInit->format(self::DATE_FORMAT));
+		$queryBuilder->setParameter('dateTimeEnd',$dateTimeEnd->format(self::DATE_FORMAT));
+	
+		$result = $queryBuilder->getQuery()->getScalarResult();
+	
+		return $result;
+	}
+	
 	/**
 	 * Returns the fully qualified comment thread class name
 	 *
