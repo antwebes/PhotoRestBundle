@@ -115,7 +115,7 @@ class VoteManager extends BaseVoteManager
 	{
 		$queryBuilder = $this->em->createQueryBuilder();
 		$queryBuilder->select('DATE(v.publicatedAt) AS DateCreatedAt, COUNT(v.publicatedAt) AS Votes, COUNT(DISTINCT v.participant) AS Users')
-		->from('FotoBundle:Vote','v')
+		->from($this->class,'v')
 		->where($queryBuilder->expr()->between('v.publicatedAt', ':dateTimeInit', ':dateTimeEnd'))
 		->addGroupBy('DateCreatedAt')
 		->addOrderBy('DateCreatedAt');
@@ -140,7 +140,7 @@ class VoteManager extends BaseVoteManager
 	{
 		$queryBuilder = $this->em->createQueryBuilder();
 		$queryBuilder->select('YEAR(v.publicatedAt) AS YEAR, WEEK(v.publicatedAt) AS WEEK, COUNT(v.publicatedAt) AS Votes , COUNT(DISTINCT v.participant) AS Users')
-		->from('FotoBundle:Vote','v')
+		->from($this->class,'v')
 		->where($queryBuilder->expr()->between('v.publicatedAt', ':dateTimeInit', ':dateTimeEnd'))
 		->groupBy('YEAR')
 		->addGroupBy('WEEK')
