@@ -92,15 +92,19 @@ class PhotoManager extends BasePhotoManager
 	{
 		return $this->repository->findOneBy($criteria);
 	}
+	
 	/**
 	 * Deletes a photo
 	 *
 	 * @param PhotoInterface $photo the photo to delete
 	 */
-	public function doDeletePhoto(PhotoInterface $photo)
+	public function doDeletePhoto(PhotoInterface $photo, $flush = true)
 	{
 		$this->em->remove($photo);
-		$this->em->flush();
+	
+		if($flush){
+			$this->em->flush();
+		}
 	}
 	
 	/**
