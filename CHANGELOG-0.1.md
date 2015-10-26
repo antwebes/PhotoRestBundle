@@ -13,3 +13,8 @@ To get the diff between two versions, go to https://github.com/antwebes/PhotoRes
 * 0.1.2 (2015-09-11)
  * one user can not vote for other
  * [HOTFIX] Added an IdToPhotoTransformer
+ 
+* 0.1.3 (2015-10-26)
+ * include field flush to save deletePhoto
+ * include method to get votes by range dates
+ * include this->class in repository
