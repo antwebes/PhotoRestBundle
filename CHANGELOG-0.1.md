@@ -18,3 +18,6 @@ To get the diff between two versions, go to https://github.com/antwebes/PhotoRes
  * include field flush to save deletePhoto
  * include method to get votes by range dates
  * include this->class in repository
+ 
+* 0.1.4 (2015-10-28)
+ * "doctrine/orm" : ">=2.2.3,<2.5-dev"
