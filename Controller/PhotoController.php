@@ -188,18 +188,20 @@ class PhotoController extends BaseRestController
 	 *  )
 	 * @QueryParam(name="limit", description="Max number of records to be returned")
      * @QueryParam(name="offset", description="Number of records to skip")
+	 * @QueryParam(name="order", description="Specify the order criteria of the result using the format COLUMN_NAME=ORDER[,COLUMN_NAME=ORDER ...]. Valid column names are score, numberVotes. Valid orders are asc and desc. Example: If you want the photos ordered by score in descending order and then order by numberVotes in ascending order then the order string would be score=desc,numberVotes=asc")
 	 */
 	public function photosUserAction(Request $request, $id)
 	{
 		$participantManager = $this->get('ant.photo_rest.manager.participant_manager');
 		$participant = $participantManager->findParticipantById($id);
+		$order = $request->query->get('order');
 		
 		if (null === $participant) {
 			return $this->createError('Unable to find User entity', '32', '404');
 		}
 	
 		$photoManager = $this->get('ant.photo_rest.entity_manager.photo_manager');
-		$entities = $photoManager->findAllMePhotos($participant);
+		$entities = $photoManager->findAllMePhotos($participant, $order);
 		
 		$linkOverrides = array('route' => 'ant_photo_rest_show_user_all', 'parameters' => array('id'), 'rel' => 'self', 'entity' => $participant);
 		$response = $this->buildPagedResourcesView($entities, 'Ant\PhotoBundle\Entity\Photo' , 200, 'photo_list', array('id'=>'id'),$linkOverrides);

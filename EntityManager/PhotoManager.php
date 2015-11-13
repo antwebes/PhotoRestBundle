@@ -64,8 +64,9 @@ class PhotoManager extends BasePhotoManager
 	 * @param array $criteria
 	 * @return array PhotoInterface
 	 */
-	public function findPhotoBy(array $criteria)
+	public function findPhotoBy(array $criteria, $orders = array())
 	{
+
 		$qb = $this->repository->createQueryBuilder('p')->select('p');
 		$whereConditions = array();
 		
@@ -79,7 +80,14 @@ class PhotoManager extends BasePhotoManager
 		  $whereSql = call_user_func_array(array($qb->expr(), 'andX'), $whereConditions);
 		  $qb->where($whereSql);
 		}
-		
+
+		foreach($orders as $order){
+			list($orderField, $orderDirection) = $order;
+			$qb->addOrderBy('p.'.$orderField, $orderDirection);
+		}
+
+
+
 		return new Paginator($qb);
 	}
 	/**

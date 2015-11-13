@@ -20,6 +20,8 @@ use Gaufrette\Filesystem;
 
 abstract class PhotoManager implements PhotoManagerInterface
 {
+	protected $validOrderFields = array('id','title', 'enabled','participant','score', 'numberVotes');
+
 	/**
 	 * @var Filesystem
 	 */
@@ -77,9 +79,15 @@ abstract class PhotoManager implements PhotoManagerInterface
      * @param ParticipantInterface $participant
      * @return PhotoInterface|null
      */
-	public function findAllMePhotos(ParticipantInterface $participant)
+	public function findAllMePhotos(ParticipantInterface $participant, $orderString = null)
 	{
-		return $this->findPhotoBy(array('participant' => $participant));
+		if($orderString === null){
+			$order = array();
+		}else{
+			$order = $this->parseOrders($orderString);
+		}
+
+		return $this->findPhotoBy(array('participant' => $participant), $order);
 	}
     /**
      * Calculate the new score of a photo with the new vote
@@ -141,5 +149,41 @@ abstract class PhotoManager implements PhotoManagerInterface
 		$photo->setAlbum(null);
 		
 		$this->doSavePhoto($photo);
+	}
+
+	/**
+	 * Convierte un string de ordenación con patron campo=ORDEN[,campo=ORDEN...] en un array asociativo.
+	 *
+	 * Ejemplo:
+	 *
+	 * paresOrders("campo1=asc,campo2=desc") = array('campo1' => 'asc', 'campo2' => 'desc')
+	 *
+	 * @param $orderString
+	 *
+	 * @return array
+	 */
+	protected function parseOrders($orderString)
+	{
+		$orders = $this->extractOdersParts($orderString);
+		return $this->fileterValidOrders($orders);
+	}
+
+	private function extractOdersParts($orderString)
+	{
+		$orders = explode(',', $orderString);
+		return array_map(function($order){
+			return explode('=', $order);
+		}, $orders);
+	}
+
+	private function fileterValidOrders($orders)
+	{
+		//TODO XABIER, mover esto a un fichero de configuración
+		$validOrderFields = $this->validOrderFields;
+		return array_filter($orders, function($order) use ($validOrderFields){
+			return count($order) == 2 &&
+			in_array($order[0], $validOrderFields) &&
+			in_array(strtolower($order[1]), array('asc', 'desc'));
+		});
 	}
 }
