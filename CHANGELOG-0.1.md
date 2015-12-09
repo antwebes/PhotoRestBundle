@@ -21,3 +21,7 @@ To get the diff between two versions, go to https://github.com/antwebes/PhotoRes
  
 * 0.1.4 (2015-10-28)
  * "doctrine/orm" : ">=2.2.3,<2.5-dev"
+ 
+* 0.1.5 (2015-12-09)
+ * Include order in photosUserAction
+ * Fixed column type of number of votes in photo entity
