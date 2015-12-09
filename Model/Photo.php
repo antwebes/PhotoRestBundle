@@ -60,7 +60,7 @@ abstract class Photo implements PhotoInterface {
 	/**
 	 * number of voter to this photo
 	 * @var int
-	 * @ORM\Column(type="string", nullable=true)
+	 * @ORM\Column(type="integer")
 	 */
 	protected $numberVotes=0;
 	/**
