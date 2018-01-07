@@ -109,7 +109,7 @@ class PhotoController extends BaseRestController
      * @ApiDoc(
      *  	description="update a photo",
      *		section="photo",
-     *  	input="Ant\PhotoRestBundle\FormType\PhotoTypeUpdate",
+     *  	input="ant.photo_rest.form_type.photo_type_update",
      *  	output="Ant\PhotoRestBundle\Model\Photo",
      *		statusCodes={
      *         201="Update entity created",

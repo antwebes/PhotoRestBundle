@@ -40,3 +40,7 @@ services:
         arguments: [%ant.photo_rest.model.album.class%]
         tags:
             - { name: form.type , alias: %ant.photo_rest.album.form_name% }
+
+    ant.photo_rest.form_type.photo_type_update:
+        class: 'Ant\PhotoRestBundle\FormType\PhotoTypeUpdate'
+        arguments: [%ant.photo_rest.model.photo.class%]
